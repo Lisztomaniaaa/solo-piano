@@ -24,12 +24,15 @@ works from a sub-path (such as GitHub Pages). Opening the file directly
 
 A browser with WebGL 2 is required.
 
-## Deploy
+## Deploy (Vercel)
 
-`.github/workflows/pages.yml` builds the site and publishes it to GitHub Pages
-on every push to `main`. In the repository settings, set **Pages → Build and
-deployment → Source** to **GitHub Actions**. The site is then served at
-`https://<user>.github.io/solo-piano/`.
+Import the repository in Vercel; `vercel.json` sets everything up. Vercel runs
+`npm run dist` (TypeScript build, then `scripts/dist.mjs` copies the site into
+`dist/`) and serves `dist/`. SoundFonts, fonts and images are sent with a
+one-year cache header.
+
+Any other static host works the same way: run `npm run dist` and publish
+`dist/`.
 
 ## Layout
 

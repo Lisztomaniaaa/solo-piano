@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p .",
+    "dist": "tsc -p . && node scripts/dist.mjs",
     "watch": "tsc -p . --watch",
     "typecheck": "tsc -p . --noEmit",
     "serve": "python3 -m http.server 8000"
