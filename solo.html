@@ -11,29 +11,20 @@
 <meta name="theme-color" content="#05132e">
 <meta name="color-scheme" content="dark only">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-<link rel="canonical" href="https://papiano.app/solo">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Papiano">
-<meta property="og:url" content="https://papiano.app/solo">
 <meta property="og:title" content="Papiano — Solo Piano">
 <meta property="og:description" content="Play piano solo in your browser with realtime SoundFont sound and MIDI support. No sign-in required.">
-<meta property="og:image" content="https://papiano.app/images/papiano-og-1200x630.webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Papiano — Solo Piano">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Papiano — Solo Piano">
 <meta name="twitter:description" content="Play piano solo in your browser with realtime SoundFont sound and MIDI support. No sign-in required.">
-<meta name="twitter:image" content="https://papiano.app/images/papiano-og-1200x630.webp">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="apple-touch-icon" href="/images/papiano-favicon-180.webp">
 <link rel="manifest" href="/manifest.json">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://papiano.app/"},{"@type":"ListItem","position":2,"name":"Dashboard","item":"https://papiano.app/dashboard"},{"@type":"ListItem","position":3,"name":"Solo Piano","item":"https://papiano.app/solo"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Do I need an account to play Solo Piano?","acceptedAnswer":{"@type":"Answer","text":"No. Solo Piano works immediately with phone touch, your computer's QWERTY keyboard, or a MIDI controller — no sign-in required. Online features such as Multiplayer, chat, quests, and the leaderboard need a signed-in profile."}},{"@type":"Question","name":"How many keys does the piano have?","acceptedAnswer":{"@type":"Answer","text":"Always a full 88 keys, A0 to C8, no matter how it looks on screen. Visible Keys in the Piano panel (34 / 56 / 88 presets, or a custom width from 3 to 52 white keys via the −/+ stepper and Apply button) only changes how much of that range is shown at once — it never removes notes from what you can reach."}},{"@type":"Question","name":"Can I use a MIDI keyboard?","acceptedAnswer":{"@type":"Answer","text":"Yes. Web MIDI is a desktop-browser feature — use Chrome or Edge. Connect any MIDI controller and Papiano detects it automatically, with real velocity and sustain-pedal support. Plugging in before or after pressing the MIDI button both work, since hot-plugged devices are watched for."}},{"@type":"Question","name":"What instrument sounds are available?","acceptedAnswer":{"@type":"Answer","text":"23 built-in instruments across four categories: Piano (Concert Grand — the default — Yamaha Grand, Bright Grand, Soft Piano, Rhodes EP, Harpsichord), String (Violin, Cello, Strings, Slow Strings, Pizzicato), Orchestra (French Horns, Trumpet, Trombone, Flute, Timpani), and Other (guitars, bass, mallets, choir, organ). Switch anytime from the SoundFont menu, or upload your own .sf2 file under Custom SF2."}},{"@type":"Question","name":"Can I change the key or practice with a beat?","acceptedAnswer":{"@type":"Answer","text":"Yes. The +/− control in the toolbar transposes the whole keyboard, and the Metronome tool gives you a steady beat with adjustable tempo while you practice."}}]}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@700;800&family=Kalam:wght@400;700&family=Nunito:wght@600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Press+Start+2P&family=Quicksand:wght@600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@700;800&family=Kalam:wght@400;700&family=Nunito:wght@600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Press+Start+2P&family=Quicksand:wght@600;700;800&display=swap"></noscript>
 
-<link rel="stylesheet" href="/css/solo/solo-piano.min.css?v=20260712fix4">
+<link rel="stylesheet" href="/css/fonts.css">
+<link rel="stylesheet" href="/css/solo/solo-piano.css">
 <style>
 .custom-sf2-filename{font-size:11px;font-weight:600;color:rgba(255,255,255,.65);padding:6px 10px 2px;letter-spacing:.02em;word-break:break-all}
 .custom-sf2-presets{display:flex;flex-direction:column;gap:4px;max-height:340px;overflow-y:auto;margin-top:4px}
@@ -68,7 +59,6 @@
         <div id="panel">
 <button id="fsBtn" title="Fullscreen">Fullscreen</button>
             <button class="btn" id="midiBtn">MIDI</button>
-            <a class="btn btn-leave" href="/dashboard">Leave</a>
             <button class="btn" id="holdBtn">Sustain</button>
             <button class="btn" id="sheetBtn" type="button">Sheet</button>
             <button class="btn" id="sfBtn">SoundFont</button>
@@ -91,7 +81,7 @@
         <div class="faq-list">
         <div class="faq-group">
             <div class="faq-group-title">Getting Started</div>
-            <details class="faq-item"><summary>Do I need an account to play Solo Piano?</summary><div class="faq-answer"><p>No. Solo Piano works immediately with phone touch, your computer's QWERTY keyboard, or a MIDI controller — no sign-in required. Online features such as Multiplayer, chat, quests, and the leaderboard need a signed-in profile.</p></div></details>
+            <details class="faq-item"><summary>Do I need an account to play Solo Piano?</summary><div class="faq-answer"><p>No. Solo Piano works immediately with phone touch, your computer's QWERTY keyboard, or a MIDI controller — no sign-in required.</p></div></details>
             <details class="faq-item"><summary>Why is there no sound when I first open the page?</summary><div class="faq-answer"><p>Every mode streams its instrument (SoundFont) before it can play — wait for loading to finish, then press a key. If the page has been open silently for a while, browsers can also block audio until you interact with the page once; a single tap or click anywhere unlocks it.</p></div></details>
         </div>
         <div class="faq-group">
@@ -111,7 +101,7 @@
             <div class="faq-group-title">Visuals &amp; Performance</div>
             <details class="faq-item"><summary>What do the falling notes actually show?</summary><div class="faq-answer"><p>With no song loaded, they work in reverse from the name: the instant you press a key, a colored bar spawns at the strike line and grows <b>upward</b> for as long as you hold the note. Release, and it floats off the top of the screen. A bar's final height is a record of how long you held that note.</p></div></details>
             <details class="faq-item"><summary>The app feels heavy on my phone — what should I try?</summary><div class="faq-answer"><p>Switch <b>Graphics Quality</b> to Potato first — it's the single biggest performance lever. Then turn down or off Particles and Key Light glow, lower Reverb if audio feels sluggish, and keep any background-image Blur modest on older phones.</p></div></details>
-            <details class="faq-item"><summary>How do I keep my setup between sessions?</summary><div class="faq-answer"><p>Press <b>Save My Preset</b> before experimenting, and <b>Load My Preset</b> to get back. Only Chord Detector mode and Auto Velocity remember themselves automatically — and Visible Keys resets to the full 88 on a fresh load unless it was saved in a preset.</p></div></details>
+            <details class="faq-item"><summary>How do I keep my setup between sessions?</summary><div class="faq-answer"><p>Save your settings under <b>Preset → My Presets</b> (up to 5, stored in this browser) and load them back anytime. Only Chord Detector mode and Auto Velocity remember themselves automatically — and Visible Keys resets to the full 88 on a fresh load unless it was saved in a preset.</p></div></details>
         </div>
         </div>
     </div>
@@ -577,18 +567,8 @@
                     <span class="preset-count-badge" id="presetCountBadge">0/5</span>
                 </div>
 
-                <!-- Shown only when signed out -- Presets are AWS-only, no local storage.
-                     No inline sign-in form here -- just a prompt pointing back to Home,
-                     where the real sign-in flow already lives. -->
-                <div class="auth-gate-card" id="presetAuthGate">
-                    <div class="auth-gate-icon"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg></div>
-                    <div class="auth-gate-title">Sign in to use Presets</div>
-                    <div class="auth-gate-sub">Presets are saved to your account so they follow you across devices.</div>
-                    <a class="auth-gate-submit-btn" href="/dashboard" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">Sign In</a>
-                </div>
-
-                <!-- Shown only when signed in. -->
-                <div class="preset-signed-in-block" id="presetSignedInBlock" style="display:none;">
+                <!-- Presets are saved in this browser's localStorage. -->
+                <div class="preset-signed-in-block" id="presetSignedInBlock">
                     <div class="preset-confirm-inline" id="presetConfirmModal" style="display:none;">
                         <div class="section-title" id="presetConfirmTitle">Save preset?</div>
                         <div class="preset-confirm-text" id="presetConfirmText"></div>
@@ -876,7 +856,6 @@
                 <summary>Piano</summary>
                 <div class="sf-category-body">
                     <button class="btn sf-option active ui-full-left" id="mainGrandPiano" data-layer="piano" data-sf-key="grandPiano">Grand Piano</button>
-                    <button class="btn sf-option ui-full-left" id="mainStagePiano" data-layer="piano" data-sf-key="stagePiano">Stage Piano</button>
                     <button class="btn sf-option ui-full-left" id="mainSal1" data-layer="piano" data-sf-key="sal1">Concert Grand</button>
                     <button class="btn sf-option ui-full-left" id="mainAtmosGrand" data-layer="piano" data-sf-key="atmosGrand">Atmos Grand</button>
                     <button class="btn sf-option ui-full-left" id="mainPfBright" data-layer="piano" data-sf-key="pfBright">Bright Grand</button>
@@ -962,7 +941,6 @@
                 <summary>Piano</summary>
                 <div class="sf-category-body">
                     <button class="btn sf-option ui-full-left" id="layerGrandPiano" data-layer="string" data-sf-key="grandPiano">Grand Piano</button>
-                    <button class="btn sf-option ui-full-left" id="layerStagePiano" data-layer="string" data-sf-key="stagePiano">Stage Piano</button>
                     <button class="btn sf-option ui-full-left" id="layerAtmosGrand" data-layer="string" data-sf-key="atmosGrand">Atmos Grand</button>
                     <button class="btn sf-option ui-full-left" id="layerSal1" data-layer="string" data-sf-key="sal1">Concert Grand</button>
                     <button class="btn sf-option ui-full-left" id="layerPfBright" data-layer="string" data-sf-key="pfBright">Bright Grand</button>
@@ -1176,11 +1154,8 @@
     <span class="bsc-bar"><i id="bootSfChipBar"></i></span>
 </div>
 
-<script src="/js/shared/sf2-loader.min.js?v=6"></script>
-<script src="/js/app/cognito-auth.min.js?v=20260629"></script>
-<script src="/js/app/appsync-client.min.js?v=20260629"></script><script src="/js/shared/playtime-tracker.min.js" defer></script>
-<script src="/js/shared/auto-velocity.min.js?v=1"></script>
-<script src="/js/solo/solo-piano.min.js?v=20260716sf1"></script>
-<script src="/js/shared/updater.min.js?v=dev"></script>
+<script src="/js/shared/sf2-loader.js"></script>
+<script src="/js/shared/auto-velocity.js"></script>
+<script src="/js/solo/solo-piano.js"></script>
 </body>
 </html>

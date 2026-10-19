@@ -2,7 +2,7 @@
   "name": "Papiano Online",
   "short_name": "Papiano",
   "description": "Play piano online — solo or in live multiplayer rooms — with realtime SoundFont sound, chat, and MIDI support.",
-  "start_url": "/dashboard",
+  "start_url": "/solo.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",

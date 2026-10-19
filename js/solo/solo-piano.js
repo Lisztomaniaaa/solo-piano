@@ -368,11 +368,10 @@ if (IS_MOBILE_AUDIO) {
 }
 masterSoftClip.connect(audioCtx.destination);
 let reverbNode = null, reverbGain = null, reverbEnabled = false, currentSf = "grandPiano", currentStringSf = "strViolin", stringEnabled = false, sustainLevel = 1.00, reverbLevel = 0.0, pianoVolume = 0.80, stringVolume = 0.80;
-// Slot IDs map 1:1 to soundfonts/pack/<slot>.sf2 (see soundfonts/pack/manifest.json).
+// Slot IDs map to soundfonts/pack/*.sf2 via SF_URLS (see SOUNDFONTS.md).
 // Labels drive the picker UI and the "Current" chip in the SoundFont panel.
 const SOUNDFONT_LABELS = {
     grandPiano:'Grand Piano',
-    stagePiano:'Stage Piano',
     sal1:'Concert Grand',
     atmosGrand:'Atmos Grand',
     pfBright:'Bright Grand',
@@ -1014,7 +1013,6 @@ function volumeGain(t){
 // describe them correctly.
 const SF_LEVEL_TRIM = {
     grandPiano: 1.35,
-    stagePiano: 0.74,
     salamander: 1.86,
     atmosGrand: 1.35,
     pfBright:   0.77,
@@ -8900,10 +8898,9 @@ function getCurrentSettings() {
     };
 }
 
-const SF2_BASE = 'https://d2cqwdxh6v3wut.cloudfront.net/soundfonts/pack/';
+const SF2_BASE = '/soundfonts/pack/';
 const SF_URLS = {
     grandPiano:   SF2_BASE + 'grandPiano.sf2',
-    stagePiano:   SF2_BASE + 'stagePiano.sf2',
     sal1: SF2_BASE + 'salamander.sf2',
     atmosGrand:   SF2_BASE + 'atmosGrand.sf2',
     pfBright:     SF2_BASE + 'pfBright.sf2',
@@ -9222,17 +9219,11 @@ function bindMemoryControls(){
 
 bindMemoryControls();
 
-// ── Presets: 100% AWS-backed (savePresetSlot/deletePresetSlot/getProfile),
-// no localStorage involvement at all. Solo Piano gates only this subpage --
-// the rest of the page works fully without an account; opening "My Presets"
-// while signed out shows a sign-in card instead of the slot list. ──────────
-(function initPresetCloud(){
-    const PRESET_MODE = 'solo';
-    const PRESET_FIELD = 'soloPresets';
+// ── Presets: stored in this browser's localStorage (no account, no backend).
+// Each slot is {id, name, data} where data is a getCurrentSettings() snapshot.
+(function initPresetLocal(){
+    const PRESET_STORAGE_KEY = 'soloPianoPresets';
     const PRESET_MAX_SLOTS = 5;
-    const SAVE_QUERY = 'mutation SavePresetSlot($mode:String!,$id:ID,$name:String!,$data:AWSJSON!){savePresetSlot(mode:$mode,id:$id,name:$name,data:$data){soloPresets}}';
-    const DELETE_QUERY = 'mutation DeletePresetSlot($mode:String!,$id:ID!){deletePresetSlot(mode:$mode,id:$id){soloPresets}}';
-    const GET_QUERY = 'query GetMyPresetSlots($uid:ID!){getProfile(uid:$uid){soloPresets}}';
 
     let presetSlots = [];
     const slotListEl = document.getElementById('presetSlotList');
@@ -9242,8 +9233,6 @@ bindMemoryControls();
     const maxHintEl = document.getElementById('presetMaxHint');
     const newNameInputEl = document.getElementById('presetNewNameInput');
     const saveNewBtnEl = document.getElementById('presetSaveNewBtn');
-    const gateEl = document.getElementById('presetAuthGate');
-    const signedInBlockEl = document.getElementById('presetSignedInBlock');
     const confirmModalEl = document.getElementById('presetConfirmModal');
     const confirmTitleEl = document.getElementById('presetConfirmTitle');
     const confirmTextEl = document.getElementById('presetConfirmText');
@@ -9279,8 +9268,6 @@ bindMemoryControls();
     });
     if(confirmNoEl) confirmNoEl.addEventListener('click', hidePresetConfirm);
 
-    // AWSJSON output fields come back over the wire as a JSON-encoded
-    // *string*, not a parsed array/object -- must be JSON.parse()'d before use.
     function parsePresetField(raw){
         if(Array.isArray(raw)) return raw;
         if(typeof raw === 'string'){
@@ -9305,16 +9292,22 @@ bindMemoryControls();
     }
 
     function fetchPresetSlots(){
-        if(!(window.papianoAuth && window.papianoAuth.currentUser)) return;
-        if(!(window.papianoData && typeof window.papianoData.gql === 'function')) return;
-        window.papianoData.gql(GET_QUERY, { uid: window.papianoAuth.currentUser.uid }).then(data => {
-            presetSlots = parsePresetField(data && data.getProfile && data.getProfile[PRESET_FIELD]);
-            renderPresetSlots();
-        }).catch(() => { presetSlots = []; renderPresetSlots(); });
+        let raw = null;
+        try{ raw = localStorage.getItem(PRESET_STORAGE_KEY); }catch(e){}
+        presetSlots = parsePresetField(raw);
+        renderPresetSlots();
+    }
+
+    function storePresetSlots(){
+        try{
+            localStorage.setItem(PRESET_STORAGE_KEY, JSON.stringify(presetSlots));
+            return true;
+        }catch(e){
+            return false;
+        }
     }
 
     function saveNewPresetSlot(name){
-        if(!(window.papianoAuth && window.papianoAuth.currentUser)){ notifyPreset('Sign in to save presets', 'error'); return; }
         if(presetSlots.length >= PRESET_MAX_SLOTS){ notifyPreset('Max ' + PRESET_MAX_SLOTS + ' presets — delete one first', 'error'); return; }
         const cleanName = String(name || '').trim().slice(0, 60) || 'Untitled';
         showPresetConfirm(
@@ -9326,17 +9319,20 @@ bindMemoryControls();
     }
 
     function doSaveNewPresetSlot(cleanName){
-        // AWSJSON as a GraphQL *input* variable must be sent as a JSON string
-        // (AppSync's scalar coercion parses variables differently from inline
-        // literals) -- unlike AWSJSON *output* fields, which already arrive
-        // as parsed objects. Sending a raw object here is what produced the
-        // "Variable 'data' has an invalid value" error.
-        window.papianoData.gql(SAVE_QUERY, { mode: PRESET_MODE, id: null, name: cleanName, data: JSON.stringify(getCurrentSettings()) }).then(data => {
-            presetSlots = parsePresetField(data && data.savePresetSlot && data.savePresetSlot[PRESET_FIELD]);
-            renderPresetSlots();
-            notifyPreset('Saved "' + cleanName + '"');
-            if(newNameInputEl) newNameInputEl.value = '';
-        }).catch(e => notifyPreset((e && e.message) || 'Failed to save', 'error'));
+        const slot = {
+            id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+            name: cleanName,
+            data: getCurrentSettings()
+        };
+        presetSlots.push(slot);
+        if(!storePresetSlots()){
+            presetSlots.pop();
+            notifyPreset('Failed to save', 'error');
+            return;
+        }
+        renderPresetSlots();
+        notifyPreset('Saved "' + cleanName + '"');
+        if(newNameInputEl) newNameInputEl.value = '';
     }
 
     function loadPresetSlot(id){
@@ -9350,13 +9346,16 @@ bindMemoryControls();
         }
     }
 
-    function deletePresetSlotRemote(id){
-        if(!(window.papianoAuth && window.papianoAuth.currentUser)) return;
-        window.papianoData.gql(DELETE_QUERY, { mode: PRESET_MODE, id }).then(data => {
-            presetSlots = parsePresetField(data && data.deletePresetSlot && data.deletePresetSlot[PRESET_FIELD]);
-            renderPresetSlots();
-            notifyPreset('Preset deleted');
-        }).catch(e => notifyPreset((e && e.message) || 'Failed to delete', 'error'));
+    function deletePresetSlotLocal(id){
+        const prev = presetSlots;
+        presetSlots = presetSlots.filter(s => s.id !== id);
+        if(!storePresetSlots()){
+            presetSlots = prev;
+            notifyPreset('Failed to delete', 'error');
+            return;
+        }
+        renderPresetSlots();
+        notifyPreset('Preset deleted');
     }
 
     if(slotListEl) slotListEl.addEventListener('click', ev => {
@@ -9373,7 +9372,7 @@ bindMemoryControls();
             showPresetConfirm(
                 'Delete preset?',
                 'Delete "' + label + '"? This cannot be undone.',
-                () => deletePresetSlotRemote(id),
+                () => deletePresetSlotLocal(id),
                 { yesLabel: 'Delete', danger: true }
             );
         }
@@ -9383,21 +9382,7 @@ bindMemoryControls();
         if(ev.key === 'Enter'){ ev.preventDefault(); saveNewPresetSlot(newNameInputEl.value); }
     });
 
-    // ── Sign-in gate: no inline form here -- just a prompt whose "Sign In"
-    // button is a plain link back to /dashboard (Home), where the real sign-in
-    // flow already lives. Solo Piano itself stays fully usable while signed
-    // out; only this Preset subpage is gated. ──────────────────────────────
-    function updatePresetAuthUI(user){
-        if(gateEl) gateEl.style.display = user ? 'none' : '';
-        if(signedInBlockEl) signedInBlockEl.style.display = user ? '' : 'none';
-        if(user) fetchPresetSlots();
-        else{ presetSlots = []; renderPresetSlots(); }
-    }
-    if(window.papianoAuth && typeof window.papianoAuth.onAuthStateChanged === 'function'){
-        window.papianoAuth.onAuthStateChanged(updatePresetAuthUI);
-    }else{
-        updatePresetAuthUI(null);
-    }
+    fetchPresetSlots();
 })();
 clearStoredSettings();
 applyFactoryDefaults(false);
@@ -11900,7 +11885,7 @@ midiBtn.onclick = () => {
 })();
 
 // Solo build — loaded ONLY by solo.html. This is a standalone piano engine
-// that only ever runs solo (no backend, no rooms, no chat, no AppSync/Cognito
+// that only ever runs solo (no backend, no rooms, no chat, no network
 // calls). Multiplayer has its OWN copy in js/multiplayer/multiplayer-piano.js,
 // so editing one never affects the other.
 //
