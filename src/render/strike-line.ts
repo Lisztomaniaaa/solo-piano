@@ -4,7 +4,7 @@
 // #strikeLineHit / #strikeLineAuraSegments CSS — one draw path instead of
 // the eight overlapping DOM layers the audit found.
 
-import type { Settings } from '../state/settings.js';
+import { settings, type Settings } from '../state/settings.js';
 import { type RGBA } from './gl.js';
 import { gradientColorForMidi, hexToRgb, rainbowColorForMidi } from './colors.js';
 import { ShapeKind, ShapeRenderer } from './shapes.js';
@@ -85,7 +85,21 @@ interface LineColors {
 export class StrikeLineRenderer {
     constructor(private shapes: ShapeRenderer, private aura: AuraRenderer) {}
 
+    // Colours and tint rows only change with settings, so they are resolved
+    // once per change rather than on every draw phase of every frame.
+    private colorsKey = '';
+    private colorsMemo: LineColors | null = null;
+    private tintKey = '';
+    private tintRows: [number, number] = [-1, -1];
+
     private colors(s: Readonly<Settings>, stageHeight: number): LineColors {
+        const key = settings.revision + '|' + stageHeight;
+        if (this.colorsMemo && key === this.colorsKey) return this.colorsMemo;
+        this.colorsKey = key;
+        return (this.colorsMemo = this.resolveColors(s, stageHeight));
+    }
+
+    private resolveColors(s: Readonly<Settings>, stageHeight: number): LineColors {
         const base = normalizeHexColor(s.strikeLineColor) || '#00e5ff';
         const sat = s.strikeLineSaturation;
         const follow = s.strikeLineColorFollowFallingNotes;
@@ -165,9 +179,15 @@ export class StrikeLineRenderer {
             const auraStops = c.stops
                 ? c.stops.map((col, i, arr) => ({ pct: i / (arr.length - 1), color: col }))
                 : [{ pct: c.splitPct / 200, color: c.lineColor }, { pct: (c.splitPct + (100 - c.splitPct) / 2) / 100, color: c.right }];
-            const tintRow = (alpha: number) => this.shapes.gradients.row(auraStops.map(st => [rgbaOf(st.color, alpha), st.pct] as [RGBA, number]));
-            const rowA = tintRow(Math.min(0.66, shadowAlphaA));
-            const rowB = tintRow(Math.min(0.42, shadowAlphaB));
+            const grads = this.shapes.gradients;
+            const tintKey = this.colorsKey + '|' + grads.generation;
+            if (tintKey !== this.tintKey) {
+                const tintRow = (alpha: number) => grads.row(auraStops.map(st => [rgbaOf(st.color, alpha), st.pct] as [RGBA, number]));
+                this.tintRows = [tintRow(Math.min(0.66, shadowAlphaA)), tintRow(Math.min(0.42, shadowAlphaB))];
+                // Evictions made by these two rows don't touch them, so key on the generation after.
+                this.tintKey = this.colorsKey + '|' + grads.generation;
+            }
+            const [rowA, rowB] = this.tintRows;
             const white = (a: number): RGBA => [1, 1, 1, a];
             const blurA = f.coarsePointer ? 4 : f.perfLite ? 4 : auraBlur;
             const blurC = f.coarsePointer ? 3 : f.perfLite ? 4 : shadowBlur;

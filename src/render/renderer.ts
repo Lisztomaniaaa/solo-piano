@@ -95,6 +95,7 @@ export class Renderer {
             this.invalidate();
         });
 
+        this.watchFonts();
         this.resize();
         window.addEventListener('resize', () => this.resize(), { passive: true });
         window.visualViewport?.addEventListener('resize', () => this.resize(), { passive: true });
@@ -128,12 +129,30 @@ export class Renderer {
             this.particles.stop(e.keyMidi);
             this.invalidate();
         });
+        // Stop All silences notes but keys stay lit until their own key-up.
         performanceEvents.on('stopAll', () => {
-            this.pressed.clear();
             this.notes.stopGrowing();
             this.particles.clear();
             this.invalidate();
         });
+    }
+
+    /**
+     * Labels are baked into the text atlas, so a web font that arrives after
+     * the first bake would leave fallback-font glyphs behind. Ask for the label
+     * faces up front and re-bake whenever a font finishes loading.
+     */
+    private watchFonts(): void {
+        const fonts = document.fonts;
+        if (!fonts) return;
+        const rebake = () => {
+            this.text.clear();
+            this.version++;
+            this.invalidate();
+        };
+        fonts.addEventListener('loadingdone', rebake);
+        const faces = ['700 12px Quicksand', '800 12px Quicksand', '900 12px Quicksand', "800 12px 'JetBrains Mono'"];
+        void Promise.all(faces.map(f => fonts.load(f).catch(() => []))).then(rebake);
     }
 
     private createGlResources(): void {
@@ -151,6 +170,7 @@ export class Renderer {
         this.aura = new AuraRenderer(gl);
         this.strikeLine = new StrikeLineRenderer(this.shapes, this.aura);
         this.particles = new Particles(gl);
+        this.text.beforeClear = () => this.text.flush(this.geo.width, this.geo.height);
         this.strikeLine.flushShapes = () => this.shapes.flush(this.geo.width, this.geo.height, this.dpr);
         this.strikeLine.flushAura = () => this.aura.flush(this.geo.width, this.geo.height, this.shapes.gradients.texture, this.shapes.gradients.rows);
     }
@@ -364,7 +384,7 @@ export class Renderer {
         // #piano{opacity}: the cached layer is composited at Piano Visibility.
         const visibility = Math.max(0, Math.min(100, s.pianoVisibilityPercent)) / 100;
         this.restingKeys.use(
-            [this.version, this.dpr, this.sketchAtlas.ready ? 1 : 0, blackDown].join('|'),
+            [this.version, this.dpr, this.text.generation, this.sketchAtlas.ready ? 1 : 0, blackDown].join('|'),
             cw, ch, () => this.keyboard.drawResting(kbFrame), visibility,
         );
         this.keyboard.drawActive(kbFrame);

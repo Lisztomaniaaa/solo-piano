@@ -13,6 +13,9 @@ export class Store<T extends object> {
         this.state = { ...initial };
     }
 
+    /** Bumped on every change; lets render code memoise derived values. */
+    revision = 0;
+
     get(): Readonly<T> {
         return this.state;
     }
@@ -23,6 +26,7 @@ export class Store<T extends object> {
             if (Object.is(this.state[key], next)) continue;
             this.state[key] = next;
             this.pending.add(key);
+            this.revision++;
         }
         if (this.batchDepth === 0) this.flush();
     }

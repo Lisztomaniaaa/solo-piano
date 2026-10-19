@@ -314,6 +314,9 @@ export class GradientAtlas {
     readonly texture: WebGLTexture;
     private next = 0;
     private byKey = new Map<string, number>();
+    private keyOfRow: (string | undefined)[] = [];
+    /** Bumped whenever a row is reused for different stops. */
+    generation = 0;
     private pixels = new Uint8Array(256 * 64 * 4);
 
     constructor(private gl: WebGL2RenderingContext) {
@@ -332,6 +335,13 @@ export class GradientAtlas {
         const hit = this.byKey.get(key);
         if (hit !== undefined) return hit;
         const row = this.next++ % this.rows;
+        const stale = this.keyOfRow[row];
+        if (stale !== undefined) {
+            // The row is being reused: forget the stops it held.
+            this.byKey.delete(stale);
+            this.generation++;
+        }
+        this.keyOfRow[row] = key;
         const px = this.pixels;
         for (let i = 0; i < 256; i++) {
             const t = i / 255;

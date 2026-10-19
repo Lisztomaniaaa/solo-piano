@@ -60,6 +60,10 @@ export class TextRenderer {
     private rowH = 0;
     private dirty = false;
     private dpr = 1;
+    /** Bumped every time the atlas is wiped; caches holding baked text key on it. */
+    generation = 0;
+    /** Called before a wipe so instances already queued are drawn with the old atlas. */
+    beforeClear: (() => void) | null = null;
     private prog: WebGLProgram;
     private vao: WebGLVertexArrayObject;
     private inst: InstanceBuffer;
@@ -101,6 +105,8 @@ export class TextRenderer {
     }
 
     clear(): void {
+        if (this.inst.count > 0) this.beforeClear?.();
+        this.generation++;
         this.entries.clear();
         this.ctx.clearRect(0, 0, ATLAS_W, ATLAS_H);
         this.penX = this.penY = this.rowH = 0;

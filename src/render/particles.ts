@@ -4,7 +4,7 @@
 // canvas) that is then composited over the stage in one pass.
 
 import type { KeyboardLayout } from '../core/geometry.js';
-import type { Settings } from '../state/settings.js';
+import { settings, type Settings } from '../state/settings.js';
 import { gradientColorForMidi, hexToRgb, midiToTuts, rainbowColorForMidi } from './colors.js';
 import { applyStrikeLineSaturation } from './strike-line.js';
 import { compileProgram, uniforms } from './gl.js';
@@ -266,7 +266,17 @@ export class Particles {
         }
     }
 
+    private dustColorsKey = '';
+    private dustColorsMemo: [number[], number[]] = [[0, 0, 0], [0, 0, 0]];
+
     private dustColors(s: Readonly<Settings>, stageHeight: number): [number[], number[]] {
+        const key = settings.revision + '|' + stageHeight;
+        if (key === this.dustColorsKey) return this.dustColorsMemo;
+        this.dustColorsKey = key;
+        return (this.dustColorsMemo = this.resolveDustColors(s, stageHeight));
+    }
+
+    private resolveDustColors(s: Readonly<Settings>, stageHeight: number): [number[], number[]] {
         const ctx = { s, stageHeight };
         let c0: string, c1: string;
         if (s.dustColorFollowFallingNotes) {
@@ -388,10 +398,11 @@ export class Particles {
             const t = life[i]! > 0 ? age[i]! / life[i]! : 1;
             let alpha = Math.min(1, A[i]! * dustFade(t));
             if (seedB[i]! < 0) alpha *= 0.6 + 0.4 * Math.sin(now * (0.010 - seedB[i]! * 0.012) + seedA[i]! * 7.0);
+            // Side-1 grains are only drawn while Particle Split Color is on
+            // (even when the side came from the falling notes' split).
+            if (side[i] && !s.dustColorSplit) continue;
             if (alpha <= 0.015) continue;
-            // Side 1 only exists while a split is active; otherwise every grain is side 0.
-            const splitOn = s.dustColorFollowFallingNotes ? s.animColorSplit : s.dustColorSplit;
-            this.push(X[i]!, Y[i]!, R[i]!, alpha, heat[i]!, side[i] && splitOn ? c1 : c0);
+            this.push(X[i]!, Y[i]!, R[i]!, alpha, heat[i]!, side[i] ? c1 : c0);
         }
         // Contact flares (Strike Reaction).
         const iMul = sliderRatio(s.strikeReactionIntensity, 55) * 1.8 * sliderRatio(s.strikeLineOpacity, 100);
