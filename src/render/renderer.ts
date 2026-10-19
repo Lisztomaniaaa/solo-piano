@@ -160,7 +160,7 @@ export class Renderer {
         this.shapes = new ShapeRenderer(gl);
         this.text = new TextRenderer(gl);
         this.text.setDpr(this.dpr);
-        this.sketchAtlas = new SpriteAtlas(gl, '/images/sketch/keys-atlas.png', () => { this.version++; this.invalidate(); });
+        this.sketchAtlas = new SpriteAtlas(gl, 'images/sketch/keys-atlas.png', () => { this.version++; this.invalidate(); });
         this.restingKeys = new CachedLayer(gl);
         this.strikeStatic = new CachedLayer(gl);
         this.keyboard = new KeyboardRenderer(this.shapes, this.text, this.sketchAtlas);

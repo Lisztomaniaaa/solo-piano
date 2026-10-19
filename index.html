@@ -6,8 +6,8 @@
 <title>Papiano — Solo Piano</title>
 <meta name="description" content="Play piano solo in your browser with Papiano — realtime SoundFont sound, MIDI support, and a clean stage. No sign-in required.">
 <meta name="keywords" content="Papiano, solo piano, online piano, browser piano, realtime piano, MIDI piano, SoundFont piano">
-<meta name="application-name" content="Papiano Online">
-<meta name="apple-mobile-web-app-title" content="Papiano Online">
+<meta name="application-name" content="Papiano">
+<meta name="apple-mobile-web-app-title" content="Papiano">
 <meta name="theme-color" content="#05132e">
 <meta name="color-scheme" content="dark only">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -19,12 +19,12 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Papiano — Solo Piano">
 <meta name="twitter:description" content="Play piano solo in your browser with realtime SoundFont sound and MIDI support. No sign-in required.">
-<link rel="icon" href="/favicon.ico" sizes="48x48">
-<link rel="apple-touch-icon" href="/images/papiano-favicon-180.webp">
-<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="images/papiano-favicon-180.webp">
+<link rel="manifest" href="manifest.json">
 
-<link rel="stylesheet" href="/css/fonts.css">
-<link rel="stylesheet" href="/css/solo/solo-piano.css">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/solo/solo-piano.css">
 <style>
 .custom-sf2-filename{font-size:11px;font-weight:600;color:rgba(255,255,255,.65);padding:6px 10px 2px;letter-spacing:.02em;word-break:break-all}
 .custom-sf2-presets{display:flex;flex-direction:column;gap:4px;max-height:340px;overflow-y:auto;margin-top:4px}
@@ -51,7 +51,7 @@
     <div id="customBgLayer"></div><video id="customBgVideo" muted loop playsinline></video><div id="customBgDimLayer"></div>
     <div id="toastWrap"></div>
     <div id="logoToggle" aria-label="Toggle UI">
-        <span class="brand-icon"><img src="/images/papiano-favicon-180.webp" alt="Papiano logo"></span>
+        <span class="brand-icon"><img src="images/papiano-favicon-180.webp" alt="Papiano logo"></span>
         <span class="brand-text">PAPIANO</span>
     </div>
     <div class="top" id="topNav">
@@ -81,7 +81,7 @@
         <div class="faq-group">
             <div class="faq-group-title">Getting Started</div>
             <details class="faq-item"><summary>Do I need an account to play Solo Piano?</summary><div class="faq-answer"><p>No. Solo Piano works immediately with phone touch, your computer's QWERTY keyboard, or a MIDI controller — no sign-in required.</p></div></details>
-            <details class="faq-item"><summary>Why is there no sound when I first open the page?</summary><div class="faq-answer"><p>Every mode streams its instrument (SoundFont) before it can play — wait for loading to finish, then press a key. If the page has been open silently for a while, browsers can also block audio until you interact with the page once; a single tap or click anywhere unlocks it.</p></div></details>
+            <details class="faq-item"><summary>Why is there no sound when I first open the page?</summary><div class="faq-answer"><p>The piano loads its instrument (SoundFont) before it can play — wait for loading to finish, then press a key. If the page has been open silently for a while, browsers can also block audio until you interact with the page once; a single tap or click anywhere unlocks it.</p></div></details>
         </div>
         <div class="faq-group">
             <div class="faq-group-title">Keyboard &amp; Input</div>
@@ -92,7 +92,7 @@
         </div>
         <div class="faq-group">
             <div class="faq-group-title">Sound</div>
-            <details class="faq-item"><summary>What instrument sounds are available?</summary><div class="faq-answer"><p>23 built-in instruments across four categories: <b>Piano</b> (Concert Grand — the default — Yamaha Grand, Bright Grand, Soft Piano, Rhodes EP, Harpsichord), <b>String</b> (Violin, Cello, Strings, Slow Strings, Pizzicato), <b>Orchestra</b> (French Horns, Trumpet, Trombone, Flute, Timpani), and <b>Other</b> (guitars, bass, mallets, choir, organ). Switch anytime from the SoundFont menu, or upload your own .sf2 file under Custom SF2.</p></div></details>
+            <details class="faq-item"><summary>What instrument sounds are available?</summary><div class="faq-answer"><p>23 built-in instruments across four categories: <b>Piano</b> (Grand Piano — the default — Concert Grand, Atmos Grand, Bright Grand, Soft Piano, E-Piano), <b>String</b> (Violin, Cello, Strings, Slow Strings, Pizzicato), <b>Orchestra</b> (French Horns, Trumpet, Trombone, Flute, Timpani), and <b>Other</b> (guitars, bass, mallets, choir, organ). Switch anytime from the SoundFont menu, or upload your own .sf2 file under Custom SF2.</p></div></details>
             <details class="faq-item"><summary>Can I layer two instruments?</summary><div class="faq-answer"><p>Yes. <b>Layer</b> sounds a second instrument alongside the main one — for example strings sitting quietly under a piano. <b>Layer Range</b> (a dual-handle 1–88 slider) restricts where the second instrument sounds, such as only under your left hand.</p></div></details>
             <details class="faq-item"><summary>Can I load my own SoundFont?</summary><div class="faq-answer"><p>Yes. Under <b>Custom SF2</b>, upload any .sf2 file. Papiano lists every preset inside it almost instantly — even for files hundreds of megabytes large — and only decodes the real audio once you pick a preset, keeping the file's own loop points so sustained notes ring cleanly.</p></div></details>
         </div>
@@ -1152,6 +1152,6 @@
     <span class="bsc-bar"><i id="bootSfChipBar"></i></span>
 </div>
 
-<script type="module" src="/build/main.js"></script>
+<script type="module" src="build/main.js"></script>
 </body>
 </html>
