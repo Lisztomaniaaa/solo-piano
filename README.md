@@ -18,17 +18,24 @@ python3 -m http.server 8000
 # or: npx serve .
 ```
 
-Then open http://localhost:8000/solo.html. Paths are absolute (`/build/...`,
-`/soundfonts/...`), so serve from the repo root; opening the file directly
+Then open http://localhost:8000/. All paths are relative, so the site also
+works from a sub-path (such as GitHub Pages). Opening the file directly
 (`file://`) will not work. `npm run watch` rebuilds on save.
 
 A browser with WebGL 2 is required.
+
+## Deploy
+
+`.github/workflows/pages.yml` builds the site and publishes it to GitHub Pages
+on every push to `main`. In the repository settings, set **Pages → Build and
+deployment → Source** to **GitHub Actions**. The site is then served at
+`https://<user>.github.io/solo-piano/`.
 
 ## Layout
 
 | Path | Role |
 |---|---|
-| `solo.html` | Page markup (panels, toolbar) |
+| `index.html` | Page markup (panels, toolbar) |
 | `css/solo/solo-piano.css` | Styles for the page chrome and panels |
 | `src/main.ts` | Entry point |
 | `src/core/` | Note hub (`performance.ts`), key geometry (`geometry.ts`), screen layout (`view.ts`) |
@@ -41,7 +48,6 @@ A browser with WebGL 2 is required.
 | `soundfonts/pack/*.sf2` | Instruments (~150 MB), see [SOUNDFONTS.md](SOUNDFONTS.md) |
 | `images/sketch/keys-atlas.png` | Sketch theme pencil key art |
 | `fonts/`, `css/fonts.css` | Self-hosted Google Fonts |
-| `ai-instructions/contexts/` | Design notes from the original project (historical; they describe the pre-TypeScript code) |
 
 ## How it fits together
 

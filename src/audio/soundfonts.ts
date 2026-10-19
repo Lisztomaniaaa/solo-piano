@@ -40,7 +40,7 @@ export const SOUNDFONT_LABELS: Record<string, string> = {
     othOrgan: 'Church Organ',
 };
 
-export const SF2_BASE = '/soundfonts/pack/';
+export const SF2_BASE = 'soundfonts/pack/';
 export const SF_URLS: Record<string, string> = {
     grandPiano: SF2_BASE + 'grandPiano.sf2',
     sal1: SF2_BASE + 'salamander.sf2',

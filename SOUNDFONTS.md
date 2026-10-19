@@ -1,13 +1,13 @@
 # SoundFonts
 
 All instruments are single-preset `.sf2` files in `soundfonts/pack/`, loaded
-from `/soundfonts/pack/` (`SF2_BASE` / `SF_URLS` in `js/solo/solo-piano.js`).
+from the same site (`SF2_BASE` / `SF_URLS` in `src/audio/soundfonts.ts`).
 Nothing is fetched from a CDN.
 
 The files were copied byte-for-byte from the original Papiano deployment. Its
 attribution file (`soundfonts/pack/manifest.json`) was not recoverable, so the
 sources below come from each file's embedded SF2 `INFO` chunk plus the
-original project's design notes (`ai-instructions/contexts/piano-engines.md`).
+original project's design notes.
 
 **Some licenses are unverified or restrictive. Check this table before
 redistributing commercially.**
@@ -33,6 +33,6 @@ redistributing commercially.**
 ## If you need a fully permissive set
 
 Replace or drop the ⚠️ rows. Removing a slot means deleting its entry from
-`SF_URLS` and `SOUNDFONT_LABELS` in `js/solo/solo-piano.js` and its
-`data-sf-key` buttons in `solo.html`. If you remove `grandPiano`, also change
+`SF_URLS` and `SOUNDFONT_LABELS` in `src/audio/soundfonts.ts` and its
+`data-sf-key` buttons in `index.html`. If you remove `grandPiano`, also change
 `DEFAULT_SF_KEY`.
