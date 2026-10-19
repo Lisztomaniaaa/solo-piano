@@ -38,7 +38,6 @@
 </head>
 <body class="render-fixed solo-mode mp-entering-piano">
 <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);border:0">Papiano — Solo Piano</h1>
-<script>window.PAPIANO_SOLO=true;</script>
 
 <div id="loadingScreen" aria-hidden="true" style="display:none;">
     <div class="ld-card">
@@ -67,7 +66,7 @@
             <button class="btn" id="colBtn">Visual</button>
             <button class="btn" id="metroBtn">Metronome</button>
             <button class="btn" id="setBtn">Tools</button>
-            <button class="btn" id="faqBtn" type="button" onclick="toggle('faqPanel')">FAQ</button>
+            <button class="btn" id="faqBtn" type="button">FAQ</button>
             <div style="display:flex; align-items:center; gap:5px; padding-left:10px; flex-shrink:0;">
                 <button class="btn" id="tDown" type="button" aria-label="Transpose down">−</button>
                 <span id="tVal" style="color:white; font-size:11px; font-weight:800; min-width:15px; text-align:center;">0</span>
@@ -1122,10 +1121,9 @@
         </div>
         <button class="metro-start-btn" id="metroStartBtn">Start</button>
     </div>
-    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="auraLiquidFilter" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.045" numOctaves="3" seed="7" stitchTiles="stitch" result="liquidNoise"/><feOffset id="auraLiquidOffset" in="liquidNoise" dx="0" dy="0" result="liquidNoiseMoved"/><feDisplacementMap in="SourceGraphic" in2="liquidNoiseMoved" scale="20" xChannelSelector="R" yChannelSelector="G"/></filter></defs></svg>
-    <div class="stage"><div id="octaveLinesLayer"></div><canvas id="fxParticles"></canvas><canvas id="fx"></canvas><div id="strikeLine"><i class="sl-wave-b" aria-hidden="true"></i></div><div id="strikeLineHit" aria-hidden="true"></div><div id="strikeLineAuraSegments" aria-hidden="true"></div><div id="strikeReactionLayer"></div><div id="chordDisplay"><div class="chord-name primary" id="chordPrimary"></div><div class="chord-name secondary" id="chordSecondary"></div></div></div><div id="perfHud" class="perf-hud"><span class="perf-fps">-- FPS</span></div>
+    <div class="stage"></div><div id="stageOverlay"><div id="chordDisplay"><div class="chord-name primary" id="chordPrimary"></div><div class="chord-name secondary" id="chordSecondary"></div></div></div><div id="perfHud" class="perf-hud"><span class="perf-fps">-- FPS</span></div>
     <div id="swipeStrip"></div>
-    <div id="pianoWrap"><div id="pianoViewport"><div id="piano"></div><div id="activeKeyLayer"></div></div></div>
+    <div id="pianoWrap"></div>
 </div>
 
 <div id="sfLoadingOverlay">
@@ -1154,8 +1152,6 @@
     <span class="bsc-bar"><i id="bootSfChipBar"></i></span>
 </div>
 
-<script src="/js/shared/sf2-loader.js"></script>
-<script src="/js/shared/auto-velocity.js"></script>
-<script src="/js/solo/solo-piano.js"></script>
+<script type="module" src="/build/main.js"></script>
 </body>
 </html>
