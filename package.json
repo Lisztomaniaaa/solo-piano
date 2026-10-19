@@ -1,0 +1,15 @@
+{
+  "name": "solo-piano",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p .",
+    "watch": "tsc -p . --watch",
+    "typecheck": "tsc -p . --noEmit",
+    "serve": "python3 -m http.server 8000"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}
