@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Papiano — Solo Piano</title>
+<meta name="description" content="Play piano solo in your browser with Papiano — realtime SoundFont sound, MIDI support, and a clean stage. No sign-in required.">
+<meta name="keywords" content="Papiano, solo piano, online piano, browser piano, realtime piano, MIDI piano, SoundFont piano">
+<meta name="application-name" content="Papiano Online">
+<meta name="apple-mobile-web-app-title" content="Papiano Online">
+<meta name="theme-color" content="#05132e">
+<meta name="color-scheme" content="dark only">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<link rel="canonical" href="https://papiano.app/solo">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Papiano">
+<meta property="og:url" content="https://papiano.app/solo">
+<meta property="og:title" content="Papiano — Solo Piano">
+<meta property="og:description" content="Play piano solo in your browser with realtime SoundFont sound and MIDI support. No sign-in required.">
+<meta property="og:image" content="https://papiano.app/images/papiano-og-1200x630.webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Papiano — Solo Piano">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Papiano — Solo Piano">
+<meta name="twitter:description" content="Play piano solo in your browser with realtime SoundFont sound and MIDI support. No sign-in required.">
+<meta name="twitter:image" content="https://papiano.app/images/papiano-og-1200x630.webp">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/images/papiano-favicon-180.webp">
+<link rel="manifest" href="/manifest.json">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://papiano.app/"},{"@type":"ListItem","position":2,"name":"Dashboard","item":"https://papiano.app/dashboard"},{"@type":"ListItem","position":3,"name":"Solo Piano","item":"https://papiano.app/solo"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Do I need an account to play Solo Piano?","acceptedAnswer":{"@type":"Answer","text":"No. Solo Piano works immediately with phone touch, your computer's QWERTY keyboard, or a MIDI controller — no sign-in required. Online features such as Multiplayer, chat, quests, and the leaderboard need a signed-in profile."}},{"@type":"Question","name":"How many keys does the piano have?","acceptedAnswer":{"@type":"Answer","text":"Always a full 88 keys, A0 to C8, no matter how it looks on screen. Visible Keys in the Piano panel (34 / 56 / 88 presets, or a custom width from 3 to 52 white keys via the −/+ stepper and Apply button) only changes how much of that range is shown at once — it never removes notes from what you can reach."}},{"@type":"Question","name":"Can I use a MIDI keyboard?","acceptedAnswer":{"@type":"Answer","text":"Yes. Web MIDI is a desktop-browser feature — use Chrome or Edge. Connect any MIDI controller and Papiano detects it automatically, with real velocity and sustain-pedal support. Plugging in before or after pressing the MIDI button both work, since hot-plugged devices are watched for."}},{"@type":"Question","name":"What instrument sounds are available?","acceptedAnswer":{"@type":"Answer","text":"23 built-in instruments across four categories: Piano (Concert Grand — the default — Yamaha Grand, Bright Grand, Soft Piano, Rhodes EP, Harpsichord), String (Violin, Cello, Strings, Slow Strings, Pizzicato), Orchestra (French Horns, Trumpet, Trombone, Flute, Timpani), and Other (guitars, bass, mallets, choir, organ). Switch anytime from the SoundFont menu, or upload your own .sf2 file under Custom SF2."}},{"@type":"Question","name":"Can I change the key or practice with a beat?","acceptedAnswer":{"@type":"Answer","text":"Yes. The +/− control in the toolbar transposes the whole keyboard, and the Metronome tool gives you a steady beat with adjustable tempo while you practice."}}]}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@700;800&family=Kalam:wght@400;700&family=Nunito:wght@600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Press+Start+2P&family=Quicksand:wght@600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@700;800&family=Kalam:wght@400;700&family=Nunito:wght@600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Press+Start+2P&family=Quicksand:wght@600;700;800&display=swap"></noscript>
+
+<link rel="stylesheet" href="/css/solo/solo-piano.min.css?v=20260712fix4">
+<style>
+.custom-sf2-filename{font-size:11px;font-weight:600;color:rgba(255,255,255,.65);padding:6px 10px 2px;letter-spacing:.02em;word-break:break-all}
+.custom-sf2-presets{display:flex;flex-direction:column;gap:4px;max-height:340px;overflow-y:auto;margin-top:4px}
+.custom-sf2-presets::-webkit-scrollbar{width:6px}
+.custom-sf2-presets::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:999px}
+.custom-sf2-presets .sf-option{font-variant-numeric:tabular-nums}
+.custom-sf2-presets .sf-option .cp-bp{opacity:.55;font-size:10.5px;margin-right:8px;font-weight:600}
+.custom-sf2-status{font-size:11px;font-weight:500;color:rgba(255,120,120,.85);padding:6px 10px 2px}
+.custom-sf2-status[data-tone="info"]{color:rgba(180,220,255,.78)}
+</style>
+</head>
+<body class="render-fixed solo-mode mp-entering-piano">
+<h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);border:0">Papiano — Solo Piano</h1>
+<script>window.PAPIANO_SOLO=true;</script>
+
+<div id="loadingScreen" aria-hidden="true" style="display:none;">
+    <div class="ld-card">
+        <div class="ld-main-label">Loading Papiano</div>
+        <div class="ld-detail-label" id="ldDetail"></div>
+        <div class="ld-bar-track ld-single-track"><div class="ld-bar-fill" id="ldBar1"></div></div>
+    </div>
+</div>
+
+<div id="app" class="fade-in">
+    <div id="customBgLayer"></div><video id="customBgVideo" muted loop playsinline></video><div id="customBgDimLayer"></div>
+    <div id="toastWrap"></div>
+    <div id="logoToggle" aria-label="Toggle UI">
+        <span class="brand-icon"><img src="/images/papiano-favicon-180.webp" alt="Papiano logo"></span>
+        <span class="brand-text">PAPIANO</span>
+    </div>
+    <div class="top" id="topNav">
+        <div id="panel">
+<button id="fsBtn" title="Fullscreen">Fullscreen</button>
+            <button class="btn" id="midiBtn">MIDI</button>
+            <a class="btn btn-leave" href="/dashboard">Leave</a>
+            <button class="btn" id="holdBtn">Sustain</button>
+            <button class="btn" id="sheetBtn" type="button">Sheet</button>
+            <button class="btn" id="sfBtn">SoundFont</button>
+            <button class="btn" id="audioBtn">Audio</button>
+            <button class="btn" id="keyBtn">Piano</button>
+            <button class="btn" id="colBtn">Visual</button>
+            <button class="btn" id="metroBtn">Metronome</button>
+            <button class="btn" id="setBtn">Tools</button>
+            <button class="btn" id="faqBtn" type="button" onclick="toggle('faqPanel')">FAQ</button>
+            <div style="display:flex; align-items:center; gap:5px; padding-left:10px; flex-shrink:0;">
+                <button class="btn" id="tDown" type="button" aria-label="Transpose down">−</button>
+                <span id="tVal" style="color:white; font-size:11px; font-weight:800; min-width:15px; text-align:center;">0</span>
+                <button class="btn" id="tUp" type="button" aria-label="Transpose up">+</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="faqPanel" class="floating-panel">
+        <div class="panel-header"><span class="panel-title">FAQ</span><button class="panel-close" data-close-panel="faqPanel">✕</button></div>
+        <div class="faq-list">
+        <div class="faq-group">
+            <div class="faq-group-title">Getting Started</div>
+            <details class="faq-item"><summary>Do I need an account to play Solo Piano?</summary><div class="faq-answer"><p>No. Solo Piano works immediately with phone touch, your computer's QWERTY keyboard, or a MIDI controller — no sign-in required. Online features such as Multiplayer, chat, quests, and the leaderboard need a signed-in profile.</p></div></details>
+            <details class="faq-item"><summary>Why is there no sound when I first open the page?</summary><div class="faq-answer"><p>Every mode streams its instrument (SoundFont) before it can play — wait for loading to finish, then press a key. If the page has been open silently for a while, browsers can also block audio until you interact with the page once; a single tap or click anywhere unlocks it.</p></div></details>
+        </div>
+        <div class="faq-group">
+            <div class="faq-group-title">Keyboard &amp; Input</div>
+            <details class="faq-item"><summary>How many keys does the piano have?</summary><div class="faq-answer"><p>Always a full 88 keys, A0 to C8, no matter how it looks on screen. <b>Visible Keys</b> in the Piano panel (34 / 56 / 88 presets, or a custom width from 3 to 52 white keys via the −/+ stepper and Apply button) only changes how much of that range is shown at once — it never removes notes from what you can reach.</p></div></details>
+            <details class="faq-item"><summary>How do I reach octaves that are off-screen?</summary><div class="faq-answer"><p>Drag or swipe left/right anywhere below the keybed to pan across the rest of the range, with momentum and a snap to the nearest white key. There's no separate octave-shift button — panning is how you get there.</p></div></details>
+            <details class="faq-item"><summary>Can I use a MIDI keyboard?</summary><div class="faq-answer"><p>Yes. Web MIDI is a desktop-browser feature — use Chrome or Edge. Connect any MIDI controller and Papiano detects it automatically, with real velocity and sustain-pedal support. Plugging in before or after pressing the MIDI button both work, since hot-plugged devices are watched for.</p></div></details>
+            <details class="faq-item"><summary>Can I change the key or practice with a beat?</summary><div class="faq-answer"><p>Yes. The +/− control in the toolbar transposes the whole keyboard, and the Metronome tool gives you a steady beat with adjustable tempo while you practice.</p></div></details>
+        </div>
+        <div class="faq-group">
+            <div class="faq-group-title">Sound</div>
+            <details class="faq-item"><summary>What instrument sounds are available?</summary><div class="faq-answer"><p>23 built-in instruments across four categories: <b>Piano</b> (Concert Grand — the default — Yamaha Grand, Bright Grand, Soft Piano, Rhodes EP, Harpsichord), <b>String</b> (Violin, Cello, Strings, Slow Strings, Pizzicato), <b>Orchestra</b> (French Horns, Trumpet, Trombone, Flute, Timpani), and <b>Other</b> (guitars, bass, mallets, choir, organ). Switch anytime from the SoundFont menu, or upload your own .sf2 file under Custom SF2.</p></div></details>
+            <details class="faq-item"><summary>Can I layer two instruments?</summary><div class="faq-answer"><p>Yes. <b>Layer</b> sounds a second instrument alongside the main one — for example strings sitting quietly under a piano. <b>Layer Range</b> (a dual-handle 1–88 slider) restricts where the second instrument sounds, such as only under your left hand.</p></div></details>
+            <details class="faq-item"><summary>Can I load my own SoundFont?</summary><div class="faq-answer"><p>Yes. Under <b>Custom SF2</b>, upload any .sf2 file. Papiano lists every preset inside it almost instantly — even for files hundreds of megabytes large — and only decodes the real audio once you pick a preset, keeping the file's own loop points so sustained notes ring cleanly.</p></div></details>
+        </div>
+        <div class="faq-group">
+            <div class="faq-group-title">Visuals &amp; Performance</div>
+            <details class="faq-item"><summary>What do the falling notes actually show?</summary><div class="faq-answer"><p>With no song loaded, they work in reverse from the name: the instant you press a key, a colored bar spawns at the strike line and grows <b>upward</b> for as long as you hold the note. Release, and it floats off the top of the screen. A bar's final height is a record of how long you held that note.</p></div></details>
+            <details class="faq-item"><summary>The app feels heavy on my phone — what should I try?</summary><div class="faq-answer"><p>Switch <b>Graphics Quality</b> to Potato first — it's the single biggest performance lever. Then turn down or off Particles and Key Light glow, lower Reverb if audio feels sluggish, and keep any background-image Blur modest on older phones.</p></div></details>
+            <details class="faq-item"><summary>How do I keep my setup between sessions?</summary><div class="faq-answer"><p>Press <b>Save My Preset</b> before experimenting, and <b>Load My Preset</b> to get back. Only Chord Detector mode and Auto Velocity remember themselves automatically — and Visible Keys resets to the full 88 on a fresh load unless it was saved in a preset.</p></div></details>
+        </div>
+        </div>
+    </div>
+
+    <div id="colorPanel" class="floating-panel compact-color-panel">
+        <div class="panel-header"><span class="panel-title">Visual</span><button class="panel-close" data-close-panel="colorPanel">✕</button></div>
+        <div class="visual-hub active" data-visual-view="hub">
+            <button class="btn visual-open-btn" type="button" data-visual-open="notes">Falling Notes</button>
+            <button class="btn visual-open-btn" type="button" data-visual-open="keyboard">Piano Keys</button>
+            <button class="btn visual-open-btn" type="button" data-visual-open="particle">Particles</button>
+            <button class="btn visual-open-btn" type="button" data-visual-open="strikeLine">Strike Line</button>
+            <button class="btn visual-open-btn" type="button" data-visual-open="background">Background</button>
+            <button class="btn visual-open-btn" type="button" data-visual-open="theme">Theme</button>
+            <button class="btn visual-open-btn" type="button" data-visual-open="preset">Preset</button>
+        </div>
+
+        <div class="visual-subpage" data-visual-subpage="notes">
+            <button class="btn visual-back-btn" type="button" data-visual-back>← Back</button>
+            <div class="color-group-title">Falling Notes</div>
+            <div class="color-row compact-color-row">
+                <div class="ui-setting-head-gap">
+                    <div>
+                        <div class="section-title" style="margin-bottom:3px;">Falling Notes</div>
+                        <div style="color:rgba(255,255,255,0.42); font-size:10px; font-weight:700;">Toggle falling notes visibility</div>
+                    </div>
+                    <div class="toggle-switch" id="animToggle"><div class="toggle-track active" id="animTrack"><div class="toggle-thumb"></div></div></div>
+                </div>
+            </div>
+            <div class="color-row compact-color-row" id="rowNoteGlow">
+                <div class="ui-setting-head-gap">
+                    <div>
+                        <div class="section-title" style="margin-bottom:3px;">Glow / Neon</div>
+                        <div style="color:rgba(255,255,255,0.42); font-size:10px; font-weight:700;">Soft aura bleeding past the note's outline</div>
+                    </div>
+                    <div class="toggle-switch" id="noteGlowToggle"><div class="toggle-track" id="noteGlowTrack"><div class="toggle-thumb"></div></div></div>
+                </div>
+            </div>
+            <div class="color-row compact-color-row" id="rowStrikeReaction">
+                <div class="ui-setting-head-gap">
+                    <div>
+                        <div class="section-title" style="margin-bottom:3px;">Strike Reaction</div>
+                        <div style="color:rgba(255,255,255,0.42); font-size:10px; font-weight:700;">Glow flare where a note touches the line</div>
+                    </div>
+                    <div class="toggle-switch" id="strikeReactionToggle"><div class="toggle-track" id="strikeReactionTrack"><div class="toggle-thumb"></div></div></div>
+                </div>
+            </div>
+            <div class="color-row compact-color-row" id="rowAnimColorMode">
+                <div class="section-title">Color Mode</div>
+                <div class="anim-style-grid">
+                    <button class="btn active" id="mModeSingle">Single</button>
+                    <button class="btn" id="mModeDouble">Double</button>
+                    <button class="btn" id="mModeGradient">Gradient</button>
+                    <button class="btn" id="mModeRainbow">Rainbow</button>
+                </div>
+            </div>
+            <div class="color-row compact-color-row" id="rowAnimKeyShade">
+                <div class="ui-setting-head-gap">
+                    <div>
+                        <div class="section-title" style="margin-bottom:3px;">Black/White Key Shade</div>
+                        <div style="color:rgba(255,255,255,0.42); font-size:10px; font-weight:700;">Black keys fall in a slightly darker, richer shade</div>
+                    </div>
+                    <div class="toggle-switch" id="animKeyShadeToggle"><div class="toggle-track active" id="animKeyShadeTrack"><div class="toggle-thumb"></div></div></div>
+                </div>
+            </div>
+            <div class="color-row compact-color-row" id="rowAnimEffect">
+                <div class="section-title">Material</div>
+                <div class="anim-style-grid">
+                    <button class="btn active" id="mSingle">Default</button>
+                    <button class="btn" id="mOutline">Outline</button>
+                    <button class="btn" id="mMidnight">Midnight</button>
+                    <button class="btn" id="mGlass">Glass</button>
+                    <button class="btn" id="mChrome">Chrome</button>
+                </div>
+            </div>
+
+            <div class="color-row compact-color-row" id="rowNoteGlowIntensity">
+                <div class="ui-setting-head"><span class="ui-label">Glow Intensity</span><span class="ui-value-sm" id="noteGlowIntensityVal">100%</span></div>
+                <input class="ui-full" type="range" id="noteGlowIntensityRange" min="0" max="100" value="100" aria-label="Glow Intensity">
+            </div>
+            <div class="color-row compact-color-row" id="rowAnimSize">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Note Size</span>
+                    <span class="ui-value-sm" id="animSizeVal">90%</span>
+                </div>
+                <input class="ui-full" type="range" id="sizeRange" min="0" max="100" value="90" aria-label="Size">
+            </div>
+            <div class="color-row compact-color-row shape-setting-block" id="rowAnimShape">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Roundness</span>
+                    <span class="ui-value-sm" id="animRoundVal">70%</span>
+                </div>
+                <input class="ui-full" type="range" id="animRoundRange" min="0" max="100" value="70" aria-label="Anim Round">
+            </div>
+            <div class="color-row compact-color-row" id="rowNoteOpacity">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Note Opacity</span>
+                    <span class="ui-value-sm" id="noteOpacityVal">100%</span>
+                </div>
+                <input class="ui-full" type="range" id="noteOpacityRange" min="10" max="100" value="100" aria-label="Note Opacity">
+            </div>
+            <div class="color-row compact-color-row" id="rowNoteSpeed">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Speed</span>
+                    <span class="ui-value-sm" id="noteSpeedVal">75%</span>
+                </div>
+                <input class="ui-full" type="range" id="noteSpeedRange" min="0" max="100" value="75" aria-label="Note Speed">
+            </div>
+            <div class="color-row compact-color-row" id="rowStrikeReactionIntensity">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Reaction Intensity</span>
+                    <span class="ui-value-sm" id="strikeReactionVal">100%</span>
+                </div>
+                <input class="ui-full" type="range" id="strikeReactionRange" min="0" max="100" value="100" aria-label="Strike Reaction Intensity">
+            </div>
+            <div class="color-row compact-color-row double-note-controls" id="rowAnimDoubleSplit">
+                <div class="section-title">Split</div>
+                <div class="split-note-slider" id="animDoubleSplitSlider">
+                    <div class="split-note-track"></div>
+                    <input type="range" id="animDoubleSplitRange" min="1" max="88" value="44" aria-label="Double note split">
+                </div>
+            </div>
+            <div class="color-row compact-color-row" id="rowAnimColor">
+                <div class="section-title">Note Color</div>
+                <div class="color-pad-host" id="gridAnim"></div>
+            </div>
+            <div class="color-row compact-color-row double-note-controls" id="rowAnimDoubleColors">
+                <div class="section-title">Left Color</div>
+                <div class="color-pad-host" id="gridAnimDoubleLeft"></div>
+                <div class="section-title ui-mt8">Right Color</div>
+                <div class="color-pad-host" id="gridAnimDoubleRight"></div>
+            </div>
+            <div class="color-row compact-color-row" id="rowAnimAxis" style="display:none">
+                <div class="section-title">Axis</div>
+                <div class="anim-style-grid">
+                    <button class="btn gradient-axis-btn active" data-axis="horizontal">Horizontal</button>
+                    <button class="btn gradient-axis-btn" data-axis="vertical">Vertical</button>
+                </div>
+            </div>
+            <div class="color-row compact-color-row" id="rowAnimGradient" style="display:none">
+                <div class="section-title">Color Spread</div>
+                <div class="anim-style-grid" style="grid-template-columns:1fr 1fr 1fr;">
+                    <button class="btn gradientSpread-btn" data-count="1">1</button>
+                    <button class="btn gradientSpread-btn active" data-count="2">2</button>
+                    <button class="btn gradientSpread-btn" data-count="3">3</button>
+                </div>
+                <div class="ui-setting-head ui-mt8"><span class="ui-label">Intensity</span><span class="ui-value-sm" id="gradientIntensityVal">70%</span></div>
+                <input class="ui-full" type="range" id="gradientIntensityRange" min="0" max="100" value="70" aria-label="Gradient Intensity">
+                <div id="rowGradientColor1" class="ui-mt8">
+                    <div class="color-pad-host" id="gridGradientColor1"></div>
+                </div>
+                <div id="rowGradientColor2" class="ui-mt8">
+                    <div class="color-pad-host" id="gridGradientColor2"></div>
+                </div>
+                <div id="rowGradientColor3" class="ui-mt8">
+                    <div class="color-pad-host" id="gridGradientColor3"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="visual-subpage" data-visual-subpage="keyboard">
+            <button class="btn visual-back-btn" type="button" data-visual-back>← Back</button>
+            <div class="color-group-title">Piano Keys</div>
+            <div class="color-row compact-color-row" id="rowOctaveLines">
+                <div class="ui-setting-head-gap">
+                    <div>
+                        <div class="section-title" style="margin-bottom:3px;">Octave Lines</div>
+                        <div style="color:rgba(255,255,255,0.42); font-size:10px; font-weight:700;">Vertical dividers at every C key across the stage</div>
+                    </div>
+                    <div class="toggle-switch" id="octaveLinesToggle"><div class="toggle-track" id="octaveLinesTrack"><div class="toggle-thumb"></div></div></div>
+                </div>
+            </div>
+            <div class="color-row compact-color-row" id="rowKeyGlow">
+                <div class="ui-setting-head-gap">
+                    <div class="section-title">Key Light</div>
+                    <div class="toggle-switch" id="keyGlowToggle"><div class="toggle-track" id="keyGlowTrack"><div class="toggle-thumb"></div></div></div>
+                </div>
+            </div>
+            <div class="color-row compact-color-row">
+                <div class="ui-setting-head-gap">
+                    <div>
+                        <div class="section-title" style="margin-bottom:3px;">Follow Falling Notes</div>
+                        <div style="color:rgba(255,255,255,0.42); font-size:10px; font-weight:700;">Key highlight color matches the falling note that struck it</div>
+                    </div>
+                    <div class="toggle-switch" id="keyColorFollowFallingToggle"><div class="toggle-track" id="keyColorFollowFallingTrack"><div class="toggle-thumb"></div></div></div>
+                </div>
+            </div>
+            <div class="color-row compact-color-row" id="rowKeyLabels">
+                <div class="section-title ui-mb8">Key Labels</div>
+                <div class="label-selector-vertical" id="labelSelectorVertical">
+                    <div class="label-option-vertical" data-mode="off"><div class="label-text">Off</div></div>
+                    <div class="label-option-vertical" data-mode="note"><div class="label-text">Note Names</div></div>
+                    <div class="label-option-vertical active" data-mode="octave"><div class="label-text">Octave</div></div>
+                    <div class="label-option-vertical" data-mode="qwerty"><div class="label-text">Keyboard</div></div><div class="label-option-vertical" data-mode="number"><div class="label-text">Numbers</div></div><div class="label-option-vertical" data-mode="solfege"><div class="label-text">Solfège</div></div><div class="label-option-vertical" data-mode="japanese"><div class="label-text">Japanese</div></div>
+                </div>
+                <div class="ui-setting-head" style="margin-top:10px;">
+                    <span class="ui-label">Label Size</span>
+                    <span class="ui-value-sm" id="keyLabelSizeVal">100%</span>
+                </div>
+                <input class="ui-full" type="range" id="keyLabelSizeRange" min="50" max="200" value="100" aria-label="Key label size">
+            </div>
+            <div class="color-row compact-color-row" id="rowKeyGlowIntensity">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Intensity</span>
+                    <span class="ui-value-sm" id="keyGlowIntensityVal">50%</span>
+                </div>
+                <input class="ui-full" type="range" id="keyGlowIntensityRange" min="0" max="100" value="50" aria-label="Key Light Intensity">
+            </div>
+            <div class="color-row compact-color-row" id="rowWhiteColor">
+                <div class="section-title">White Key Color</div>
+                <div class="color-pad-host" id="gridWhiteTuts"></div>
+            </div>
+            <div class="color-row compact-color-row" id="rowBlackColor">
+                <div class="section-title">Black Key Color</div>
+                <div class="color-pad-host" id="gridBlackTuts"></div>
+            </div>
+        </div>
+
+        <div class="visual-subpage" data-visual-subpage="particle">
+            <button class="btn visual-back-btn" type="button" data-visual-back>← Back</button>
+            <div class="color-group-title">Particles</div>
+            <div class="color-row compact-color-row" id="rowParticleFx">
+                <div class="ui-setting-head-gap">
+                    <div class="section-title">Particles</div>
+                    <div class="toggle-switch" id="particleEnabledToggle"><div class="toggle-track active" id="particleEnabledTrack"><div class="toggle-thumb"></div></div></div>
+                </div>
+            </div>
+            <div class="color-row compact-color-row">
+                <div class="ui-setting-head-gap">
+                    <div>
+                        <div class="section-title" style="margin-bottom:3px;">Follow Falling Notes</div>
+                        <div style="color:rgba(255,255,255,0.42); font-size:10px; font-weight:700;">Particle color matches the falling notes color scheme</div>
+                    </div>
+                    <div class="toggle-switch" id="dustColorFollowFallingToggle"><div class="toggle-track" id="dustColorFollowFallingTrack"><div class="toggle-thumb"></div></div></div>
+                </div>
+            </div>
+            <div class="color-row compact-color-row">
+                <div class="ui-setting-head-gap">
+                    <div>
+                        <div class="section-title" style="margin-bottom:3px;">Split Color</div>
+                        <div style="color:rgba(255,255,255,0.42); font-size:10px; font-weight:700;">Left/right keys get separate particle colors</div>
+                    </div>
+                    <div class="toggle-switch" id="dustColorSplitToggle"><div class="toggle-track" id="dustColorSplitTrack"><div class="toggle-thumb"></div></div></div>
+                </div>
+            </div>
+            <div class="color-row compact-color-row" id="rowDustBlend">
+                <div class="section-title">Particle Mode</div>
+                <div class="anim-style-grid" style="grid-template-columns:1fr 1fr;">
+                    <button class="btn active" type="button" id="dustBlendGlow">V1</button>
+                    <button class="btn" type="button" id="dustBlendSolid">V2</button>
+                </div>
+            </div>
+            <div class="color-row compact-color-row" id="rowParticleCount">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Count</span>
+                    <span class="ui-value-sm" id="particleCountVal">40%</span>
+                </div>
+                <input class="ui-full" type="range" id="particleCountRange" min="0" max="50" value="40" aria-label="Particle Count">
+            </div>
+            <div class="color-row compact-color-row" id="rowParticleSize">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Size</span>
+                    <span class="ui-value-sm" id="particleSizeVal">50%</span>
+                </div>
+                <input class="ui-full" type="range" id="particleSizeRange" min="0" max="50" value="50" aria-label="Particle Size">
+            </div>
+            <div class="color-row compact-color-row" id="rowParticleOpacity">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Opacity</span>
+                    <span class="ui-value-sm" id="particleOpacityVal">100%</span>
+                </div>
+                <input class="ui-full" type="range" id="particleOpacityRange" min="0" max="100" value="100" aria-label="Particle Opacity">
+            </div>
+            <div class="color-row compact-color-row" id="rowParticleSpeed">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Speed</span>
+                    <span class="ui-value-sm" id="particleSpeedVal">30%</span>
+                </div>
+                <input class="ui-full" type="range" id="particleSpeedRange" min="0" max="100" value="30" aria-label="Particle Speed">
+            </div>
+            <div class="color-row compact-color-row" id="rowParticleTurbulence">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Turbulence</span>
+                    <span class="ui-value-sm" id="particleTurbulenceVal">30%</span>
+                </div>
+                <input class="ui-full" type="range" id="particleTurbulenceRange" min="0" max="100" value="30" aria-label="Particle Turbulence">
+            </div>
+            <div class="color-row compact-color-row" id="rowParticleFade">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Fade</span>
+                    <span class="ui-value-sm" id="particleFadeVal">40%</span>
+                </div>
+                <input class="ui-full" type="range" id="particleFadeRange" min="0" max="100" value="40" aria-label="Particle Fade">
+            </div>
+            <div class="color-row compact-color-row" id="rowParticleSaturation">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Saturation</span>
+                    <span class="ui-value-sm" id="particleSaturationVal">100%</span>
+                </div>
+                <input class="ui-full" type="range" id="particleSaturationRange" min="0" max="100" value="100" aria-label="Particle Saturation">
+            </div>
+            <div class="color-row compact-color-row double-note-controls" id="rowDustDoubleSplit">
+                <div class="section-title">Split</div>
+                <div class="split-note-slider" id="dustDoubleSplitSlider">
+                    <div class="split-note-track"></div>
+                    <input type="range" id="dustDoubleSplitRange" min="1" max="88" value="44" aria-label="Particle double split">
+                </div>
+            </div>
+            <div class="color-row compact-color-row" id="rowDustColor">
+                <div class="section-title">Particle Color</div>
+                <div class="color-pad-host" id="gridDust"></div>
+            </div>
+            <div class="color-row compact-color-row double-note-controls" id="rowDustDoubleColors">
+                <div class="section-title">Left Color</div>
+                <div class="color-pad-host" id="gridDustDoubleLeft"></div>
+                <div class="section-title ui-mt8">Right Color</div>
+                <div class="color-pad-host" id="gridDustDoubleRight"></div>
+            </div>
+        </div>
+
+        <div class="visual-subpage" data-visual-subpage="strikeLine">
+            <button class="btn visual-back-btn" type="button" data-visual-back>← Back</button>
+            <div class="color-group-title">Strike Line</div>
+            <div class="color-row compact-color-row" id="rowStrikeLineFx">
+                <div class="ui-setting-head-gap">
+                    <div class="section-title">Strike Line</div>
+                    <div class="toggle-switch" id="strikeLineEnabledToggle"><div class="toggle-track active" id="strikeLineEnabledTrack"><div class="toggle-thumb"></div></div></div>
+                </div>
+            </div>
+            <div class="color-row compact-color-row">
+                <div class="ui-setting-head-gap">
+                    <div>
+                        <div class="section-title" style="margin-bottom:3px;">Follow Falling Notes</div>
+                        <div style="color:rgba(255,255,255,0.42); font-size:10px; font-weight:700;">Strike line color matches the falling notes color scheme</div>
+                    </div>
+                    <div class="toggle-switch" id="strikeLineColorFollowFallingToggle"><div class="toggle-track" id="strikeLineColorFollowFallingTrack"><div class="toggle-thumb"></div></div></div>
+                </div>
+            </div>
+            <div class="color-row compact-color-row">
+                <div class="ui-setting-head-gap">
+                    <div>
+                        <div class="section-title" style="margin-bottom:3px;">Split Color</div>
+                        <div style="color:rgba(255,255,255,0.42); font-size:10px; font-weight:700;">Left/right keys get separate strike line colors</div>
+                    </div>
+                    <div class="toggle-switch" id="strikeLineColorSplitToggle"><div class="toggle-track" id="strikeLineColorSplitTrack"><div class="toggle-thumb"></div></div></div>
+                </div>
+            </div>
+            <div class="color-row compact-color-row" id="rowStrikeLineBrightness">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Intensity</span>
+                    <span class="ui-value-sm" id="strikeLineBrightnessVal">100%</span>
+                </div>
+                <input class="ui-full" type="range" id="strikeLineBrightnessRange" min="0" max="100" value="100" aria-label="Strike Line Brightness">
+            </div>
+            <div class="color-row compact-color-row" id="rowStrikeLineOpacity">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Opacity</span>
+                    <span class="ui-value-sm" id="strikeLineOpacityVal">100%</span>
+                </div>
+                <input class="ui-full" type="range" id="strikeLineOpacityRange" min="0" max="100" value="100" aria-label="Strike Line Opacity">
+            </div>
+            <div class="color-row compact-color-row" id="rowStrikeLineSaturation">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Saturation</span>
+                    <span class="ui-value-sm" id="strikeLineSaturationVal">100%</span>
+                </div>
+                <input class="ui-full" type="range" id="strikeLineSaturationRange" min="0" max="100" value="100" aria-label="Strike Line Saturation">
+            </div>
+            <div class="color-row compact-color-row" id="rowStrikeLineSize">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Line Size</span>
+                    <span class="ui-value-sm" id="strikeLineSizeVal">3px</span>
+                </div>
+                <input class="ui-full" type="range" id="strikeLineSizeRange" min="1" max="10" value="3" aria-label="Strike Line Size">
+            </div>
+            <div class="color-row compact-color-row" id="rowStrikeLineAura">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Aura Height</span>
+                    <span class="ui-value-sm" id="strikeLineAuraVal">100%</span>
+                </div>
+                <input class="ui-full" type="range" id="strikeLineAuraRange" min="0" max="200" value="100" aria-label="Strike Line Aura">
+            </div>
+            <div class="color-row compact-color-row" id="rowStrikeLineMotion">
+                <div class="ui-setting-head">
+                    <span class="ui-label">Motion Speed</span>
+                    <span class="ui-value-sm" id="strikeLineMotionVal">50%</span>
+                </div>
+                <input class="ui-full" type="range" id="strikeLineMotionRange" min="0" max="100" value="50" aria-label="Aura motion speed">
+            </div>
+            <div class="color-row compact-color-row double-note-controls" id="rowStrikeLineSplitTuts">
+                <div class="section-title">Split</div>
+                <div class="split-note-slider" id="strikeLineSplitSlider">
+                    <div class="split-note-track"></div>
+                    <input type="range" id="strikeLineSplitRange" min="1" max="88" value="44" aria-label="Strike Line double split">
+                </div>
+            </div>
+            <div class="color-row compact-color-row" id="rowStrikeLineColor">
+                <div class="section-title">Strike Color</div>
+                <div class="color-pad-host" id="gridStrikeLine"></div>
+            </div>
+            <div class="color-row compact-color-row double-note-controls" id="rowStrikeLineSplitColors">
+                <div class="section-title">Left Color</div>
+                <div class="color-pad-host" id="gridStrikeLineLeft"></div>
+                <div class="section-title ui-mt8">Right Color</div>
+                <div class="color-pad-host" id="gridStrikeLineRight"></div>
+            </div>
+        </div>
+
+        <div class="visual-subpage" data-visual-subpage="background">
+            <button class="btn visual-back-btn" type="button" data-visual-back>← Back</button>
+            <div class="color-group-title">Background</div>
+            <div class="color-row compact-color-row">
+                <div class="section-title">Background Image</div>
+                <div class="ui-grid-2">
+                    <label class="btn" for="bgImgInput" style="margin:0;">Choose Image/Video</label>
+                    <button class="btn" id="bgImgRemove" type="button" style="display:none;">Remove</button>
+                </div>
+                <div class="section-title ui-mt8">Fit</div>
+                <div class="option-grid-3">
+                    <button class="btn bg-fit-btn active" type="button" data-bg-fit="cover">Cover</button>
+                    <button class="btn bg-fit-btn" type="button" data-bg-fit="contain">Contain</button>
+                    <button class="btn bg-fit-btn" type="button" data-bg-fit="stretch">Stretch</button>
+                </div>
+                <div class="section-title ui-mt8">Position</div>
+                <div class="option-grid-3">
+                    <button class="btn bg-pos-btn active" type="button" data-bg-position="center">Center</button>
+                    <button class="btn bg-pos-btn" type="button" data-bg-position="top">Top</button>
+                    <button class="btn bg-pos-btn" type="button" data-bg-position="bottom">Bottom</button>
+                </div>
+                <div class="sf-effect-head ui-mt8"><span>Opacity</span><span id="bgOpacityVal">100%</span></div>
+                <input type="range" id="bgOpacityRange" min="0" max="100" value="100" aria-label="Bg Opacity">
+                <div class="sf-effect-head"><span>Dark Overlay</span><span id="bgDimVal">0%</span></div>
+                <input type="range" id="bgDimRange" min="0" max="100" value="0" aria-label="Bg Dim">
+                <div class="sf-effect-head"><span>Blur</span><span id="bgBlurVal">0px</span></div>
+                <input type="range" id="bgBlurRange" min="0" max="20" value="0" aria-label="Bg Blur">
+            </div>
+            <input type="file" id="bgImgInput" accept="image/*,video/*" style="display:none;" aria-label="Background image or video">
+        </div>
+
+        <div class="visual-subpage" data-visual-subpage="theme">
+            <button class="btn visual-back-btn" type="button" data-visual-back>← Back</button>
+            <div class="color-group-title">Theme</div>
+            <div class="color-row compact-color-row">
+                <div class="section-title ui-mb8">Piano Theme</div>
+                <div class="anim-style-grid" style="grid-template-columns:1fr 1fr 1fr;">
+                    <button class="btn theme-btn active" type="button" id="themeDefault">Default</button>
+                    <button class="btn theme-btn" type="button" id="themeSketch">Sketch</button>
+                    <button class="btn theme-btn" type="button" id="theme8bit">8-bit</button>
+                </div>
+                <div style="color:rgba(255,255,255,0.38); font-size:10px; font-weight:700; margin-top:8px;">Sketch = hand-drawn notebook. 8-bit = pixel cartridge. Both affect keys, falling notes, and overall look.</div>
+            </div>
+        </div>
+
+        <div class="visual-subpage" data-visual-subpage="preset">
+            <button class="btn visual-back-btn" type="button" data-visual-back>← Back</button>
+            <div class="color-group-title">Preset</div>
+            <div class="color-row compact-color-row">
+                <div class="section-title">Default</div>
+                <button class="btn ui-full" id="memoryResetDefaultsBtn" type="button">Reset Defaults</button>
+            </div>
+            <div class="color-row compact-color-row">
+                <div class="ui-setting-head-gap">
+                    <div class="section-title">My Presets</div>
+                    <span class="preset-count-badge" id="presetCountBadge">0/5</span>
+                </div>
+
+                <!-- Shown only when signed out -- Presets are AWS-only, no local storage.
+                     No inline sign-in form here -- just a prompt pointing back to Home,
+                     where the real sign-in flow already lives. -->
+                <div class="auth-gate-card" id="presetAuthGate">
+                    <div class="auth-gate-icon"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg></div>
+                    <div class="auth-gate-title">Sign in to use Presets</div>
+                    <div class="auth-gate-sub">Presets are saved to your account so they follow you across devices.</div>
+                    <a class="auth-gate-submit-btn" href="/dashboard" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">Sign In</a>
+                </div>
+
+                <!-- Shown only when signed in. -->
+                <div class="preset-signed-in-block" id="presetSignedInBlock" style="display:none;">
+                    <div class="preset-confirm-inline" id="presetConfirmModal" style="display:none;">
+                        <div class="section-title" id="presetConfirmTitle">Save preset?</div>
+                        <div class="preset-confirm-text" id="presetConfirmText"></div>
+                        <div class="anim-style-grid">
+                            <button class="btn" id="presetConfirmNo" type="button">Cancel</button>
+                            <button class="btn active" id="presetConfirmYes" type="button">Yes</button>
+                        </div>
+                    </div>
+                    <div class="preset-slot-list" id="presetSlotList"></div>
+                    <div class="preset-empty-hint" id="presetEmptyHint" style="display:none;">No presets saved yet.</div>
+                    <div class="preset-new-row" id="presetNewRow">
+                        <input class="preset-name-input" type="text" id="presetNewNameInput" placeholder="Preset name" maxlength="60" aria-label="Preset name" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" data-form-type="other" data-lpignore="true" data-1p-ignore="true">
+                        <button class="btn preset-save-new-btn" id="presetSaveNewBtn" type="button" title="Save current settings as a new preset">
+                            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+                        </button>
+                    </div>
+                    <div class="preset-max-hint" id="presetMaxHint" style="display:none;">Max 5 presets — delete one to save a new one.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsPanel" class="floating-panel settings-hub-panel">
+        <div class="panel-header"><span class="panel-title">Tools</span><button class="panel-close" data-close-panel="settingsPanel">✕</button></div>
+        <div class="settings-hub">
+            <div class="settings-nav-vertical" id="settingsCategoryNav" style="display:none !important;">
+                <button class="btn settings-cat-btn active" data-settings-tab="performance">Performance</button>
+                <button class="btn settings-cat-btn" data-settings-tab="piano">Piano</button>
+                <button class="btn settings-cat-btn" data-settings-tab="visual">Visual</button>
+                <button class="btn settings-cat-btn" data-settings-tab="practice">Input</button>
+            </div>
+            <div class="settings-content-wrap">
+                <div class="settings-section active" data-settings-section="performance">
+                    <div class="section-title">Performance</div>
+                    <div class="perf-setting-block">
+                        <div class="ui-setting-head-gap">
+                            <div>
+                                <div class="ui-label-strong">Performance Monitor</div>
+                                <div class="ui-muted-caption">FPS HUD only</div>
+                            </div>
+                            <div class="toggle-switch" id="perfToggle"><div class="toggle-track" id="perfTrack"><div class="toggle-thumb"></div></div></div>
+                        </div>
+                    </div>
+                    <div class="perf-setting-block ui-mt8">
+                        <div class="ui-setting-head-gap">
+                            <div>
+                                <div class="ui-label-strong">Auto Velocity</div>
+                                <div class="ui-muted-caption">Humanized dynamics for keyboard, mouse &amp; touch — MIDI devices keep their real velocity</div>
+                            </div>
+                            <div class="toggle-switch" id="autoVelToggle"><div class="toggle-track" id="autoVelTrack"><div class="toggle-thumb"></div></div></div>
+                        </div>
+                        <div class="graphic-grid" style="grid-template-columns:1fr 1fr 1fr; margin-top:9px;">
+                            <button class="graphic-btn" id="autoVelModeArpeggio">Arpeggio</button>
+                            <button class="graphic-btn" id="autoVelModeBlock">Block Chord</button>
+                            <button class="graphic-btn active" id="autoVelModeMix">Mix</button>
+                        </div>
+                        <div style="color:rgba(255,255,255,0.35); font-size:10px; margin-top:6px;">Arpeggio: broken-chord/melodic lines · Block Chord: simultaneous voicing · Mix: auto-picks per gesture</div>
+                        <div class="ui-setting-head" style="margin-top:9px;">
+                            <span class="ui-label">Live Velocity</span>
+                            <span class="ui-value" id="velMeterVal">0%</span>
+                        </div>
+                        <div class="vel-meter-track"><div class="vel-meter-fill" id="velMeterFill"></div></div>
+                        <div style="color:rgba(255,255,255,0.35); font-size:10px; margin-top:6px;">Plays every time a note sounds — on or off, real MIDI included. Watch it move to confirm dynamics are live.</div>
+                    </div>
+                    <div class="perf-setting-block ui-mt8">
+                        <div class="section-title ui-mb8">Graphics Quality</div>
+                        <div class="graphic-grid">
+                            <button class="graphic-btn" id="gfxPotato">Potato</button>
+                            <button class="graphic-btn" id="gfxDefault">Default</button>
+                        </div>
+                        <div style="color:rgba(255,255,255,0.35); font-size:10px; margin-top:6px;">Potato = Limited (heavy FX hidden) · Default = No Limits (Maxed)</div>
+                    </div>
+                    <div class="perf-setting-block ui-mt8">
+                        <div class="section-title ui-mb8">Chord Detector</div>
+                        <div class="graphic-grid" style="grid-template-columns:1fr 1fr 1fr;">
+                            <button class="graphic-btn" id="chordModeOff">Off</button>
+                            <button class="graphic-btn" id="chordModeBasic">Basic</button>
+                            <button class="graphic-btn" id="chordModeMedium">Medium</button>
+                            <button class="graphic-btn" id="chordModePro">Pro</button>
+                            <button class="graphic-btn active" id="chordModeExpert">Expert</button>
+                            <button class="graphic-btn" id="chordModeMax">Max</button>
+                        </div>
+                        <div style="color:rgba(255,255,255,0.35); font-size:10px; margin-top:6px;">Basic: triads · Medium: 9ths (unaltered) · Pro: altered ≤9 · Expert: full 11/13 · Max: + omit</div>
+                        <div class="ui-setting-head" style="margin-top:10px;">
+                            <span class="ui-label">Text Size</span>
+                            <span class="ui-value-sm" id="chordTextSizeVal">85%</span>
+                        </div>
+                        <input class="ui-full" type="range" id="chordTextSizeRange" min="50" max="200" value="85" aria-label="Chord text size">
+                    </div>
+                    <div class="perf-setting-block ui-mt8">
+                        <div class="section-title ui-mb8">Chord Color</div>
+                        <div class="color-pad-host" id="chordPrimaryColor"></div>
+                        <div class="section-title ui-mt8">Secondary</div>
+                        <div class="color-pad-host" id="chordSecondaryColor"></div>
+                        <button class="btn" id="chordColorReset" type="button" style="width:100%;margin-top:7px;">Reset Chord Color</button>
+                    </div>
+                </div>
+                <div class="settings-section" data-settings-section="piano">
+                    <div class="section-title">Piano</div>
+                    <div class="perf-setting-block">
+                        <div class="section-title ui-mb8">Visible Keys</div>
+                        <div class="ui-grid-3-preset">
+                            <button class="btn key-preset-btn ui-pad-x-10" data-key-count="20">34</button>
+                            <button class="btn key-preset-btn ui-pad-x-10" data-key-count="33">56</button>
+                            <button class="btn key-preset-btn ui-pad-x-10" data-key-count="52">88</button>
+                        </div>
+                        <div class="ui-center-actions">
+                            <button class="btn ui-stepper-btn" id="settingsWD">−</button>
+                            <div class="ui-count"><div class="ui-count-main" id="settingsWC">88</div><div class="ui-count-sub">keys</div></div>
+                            <button class="btn ui-stepper-btn" id="settingsWU">+</button>
+                        </div>
+                        <button class="btn key-apply-btn" id="settingsKeyApply" type="button">Apply</button>
+                    </div>
+                    <div class="height-stepper perf-setting-block ui-mt10">
+                        <div class="ui-setting-head">
+                            <span class="ui-label">Piano Height</span>
+                            <span class="ui-value" id="hVal">50%</span>
+                        </div>
+                        <input class="ui-full" type="range" id="hRange" min="0" max="100" value="50" aria-label="Hue">
+                    </div>
+<div class="perf-setting-block ui-mt8">
+                        <div class="section-title ui-mb8">Key Labels</div>
+                        <div class="label-selector-vertical">
+                            <div class="label-option-vertical" data-mode="off"><div class="label-text">Off</div></div>
+                            <div class="label-option-vertical" data-mode="note"><div class="label-text">Note Names</div></div>
+                            <div class="label-option-vertical active" data-mode="octave"><div class="label-text">Octave</div></div>
+                            <div class="label-option-vertical" data-mode="qwerty"><div class="label-text">Keyboard</div></div><div class="label-option-vertical" data-mode="number"><div class="label-text">Numbers</div></div><div class="label-option-vertical" data-mode="solfege"><div class="label-text">Solfège</div></div><div class="label-option-vertical" data-mode="japanese"><div class="label-text">Japanese</div></div>
+                        </div>
+                    </div>
+                    <div class="perf-setting-block ui-mt8">
+                        <div class="ui-setting-head">
+                            <span class="ui-label">Sustain</span>
+                            <span class="ui-value" id="settingsSustainSf1Val">100%</span>
+                        </div>
+                        <input class="ui-full" type="range" id="settingsSustainSf1Range" min="0" max="100" value="100" aria-label="Sustain Sf 1">
+                    </div>
+
+                    <div class="settings-sub-divider"></div>
+                    <div class="section-title">Sound Layer</div>
+<div class="perf-setting-block">
+                        <div class="ui-setting-head"><span class="ui-label-strong">Piano Volume</span><span class="ui-value" id="settingsPianoVolVal">100%</span></div>
+                        <input class="ui-full" type="range" id="settingsPianoVolRange" min="0" max="100" value="100" aria-label="Piano Vol">
+                        <div class="ui-setting-head-divided"><span class="ui-label-strong">Layer Volume</span><span class="ui-value" id="settingsStringVolVal">100%</span></div>
+                        <input class="ui-full" type="range" id="settingsStringVolRange" min="0" max="100" value="100" aria-label="Layer Vol">
+                    </div>
+<div class="perf-setting-block ui-mt8">
+                        <div class="ui-setting-head-gap">
+                            <div>
+                                <div class="ui-label-strong">Layer</div>
+                                <div class="ui-muted-caption">Second sound layer</div>
+                            </div>
+                            <div class="toggle-switch" id="settingsStringToggle"><div class="toggle-track" id="settingsStringTrack"><div class="toggle-thumb"></div></div></div>
+                        </div>
+                        <div class="sf-effect-head"><span>Layer Fade</span><span id="settingsSustainSf2Val">5.0s</span></div>
+                        <input class="ui-full" type="range" id="settingsSustainSf2Range" min="0.1" max="10" step="0.1" value="5" aria-label="Layer Fade">
+                    </div>
+                </div>
+                <div class="settings-section" data-settings-section="visual">
+                    <div class="section-title">Visual</div>
+                    <div class="perf-setting-block">
+                        <div class="ui-setting-head-gap">
+                            <div><div class="ui-label-strong">Falling Notes</div><div class="ui-muted-caption">Toggle falling notes visibility</div></div>
+                            <div class="toggle-switch" id="settingsAnimToggle"><div class="toggle-track active" id="settingsAnimTrack"><div class="toggle-thumb"></div></div></div>
+                        </div>
+                    </div>
+                    <div class="perf-setting-block ui-mt8">
+                        <div class="ui-setting-head"><span class="ui-label">Note Size</span><span class="ui-value-sm" id="settingsAnimSizeVal">90%</span></div>
+                        <input class="ui-full" type="range" id="settingsSizeRange" min="0" max="100" value="90" aria-label="Size">
+                    </div>
+                    <div class="perf-setting-block ui-mt8">
+                        <div class="section-title ui-mb8">Note Shape</div>
+                        <div class="shape-choice-grid">
+                            <button class="btn shape-choice" type="button" data-shape="rect">Rectangle</button>
+                            <button class="btn shape-choice active" type="button" data-shape="rounded">Rounded</button>
+                        </div>
+                    </div>
+                    <div class="perf-setting-block ui-mt8">
+                        <div class="section-title ui-mb8">Color Mode</div>
+                        <div class="anim-style-grid">
+                            <button class="btn active" data-color-mode-target="mModeSingle">Single</button>
+                            <button class="btn" data-color-mode-target="mModeDouble">Double</button>
+                            <button class="btn" data-color-mode-target="mModeGradient">Gradient</button>
+                            <button class="btn" data-color-mode-target="mModeRainbow">Rainbow</button>
+                        </div>
+                    </div>
+                    <div class="perf-setting-block ui-mt8" id="rowAnimAxisSettings" style="display:none">
+                        <div class="section-title ui-mb8">Axis</div>
+                        <div class="anim-style-grid">
+                            <button class="btn gradient-axis-btn active" data-axis="horizontal">Horizontal</button>
+                            <button class="btn gradient-axis-btn" data-axis="vertical">Vertical</button>
+                        </div>
+                    </div>
+                    <div class="perf-setting-block ui-mt8" id="rowAnimGradientSettings" style="display:none">
+                        <div class="section-title ui-mb8">Color Spread</div>
+                        <div class="anim-style-grid" style="grid-template-columns:1fr 1fr 1fr;">
+                            <button class="btn settingsGradientSpread-btn" data-count="1">1</button>
+                            <button class="btn settingsGradientSpread-btn active" data-count="2">2</button>
+                            <button class="btn settingsGradientSpread-btn" data-count="3">3</button>
+                        </div>
+                        <div class="ui-setting-head ui-mt8"><span class="ui-label">Intensity</span><span class="ui-value-sm" id="settingsGradientIntensityVal">70%</span></div>
+                        <input class="ui-full" type="range" id="settingsGradientIntensityRange" min="0" max="100" value="70" aria-label="Gradient Intensity">
+                        <div style="color:rgba(255,255,255,0.42); font-size:10px; font-weight:700; margin-top:6px;">Colors: open the full Notes panel to pick them</div>
+                    </div>
+                    <div class="perf-setting-block ui-mt8">
+                        <div class="section-title ui-mb8">Material</div>
+                        <div class="anim-style-grid">
+                            <button class="btn settings-anim-style active" data-style-target="mSingle">Default</button>
+                            <button class="btn settings-anim-style" data-style-target="mOutline">Outline</button>
+                            <button class="btn settings-anim-style" data-style-target="mMidnight">Midnight</button>
+                            <button class="btn settings-anim-style" data-style-target="mGlass">Glass</button>
+                            <button class="btn settings-anim-style" data-style-target="mChrome">Chrome</button>
+                        </div>
+                    </div>
+                    <div class="perf-setting-block ui-mt8" id="rowSettingsNoteGlow">
+                        <div class="ui-setting-head-gap">
+                            <div><div class="ui-label-strong">Glow / Neon</div><div class="ui-muted-caption">Soft aura bleeding past the note's outline</div></div>
+                            <div class="toggle-switch" id="settingsNoteGlowToggle"><div class="toggle-track" id="settingsNoteGlowTrack"><div class="toggle-thumb"></div></div></div>
+                        </div>
+                        <div class="ui-setting-head ui-mt8"><span class="ui-label">Glow Intensity</span><span class="ui-value-sm" id="settingsNoteGlowIntensityVal">100%</span></div>
+                        <input class="ui-full" type="range" id="settingsNoteGlowIntensityRange" min="0" max="100" value="100" aria-label="Glow Intensity">
+                    </div>
+                    <div class="perf-setting-block ui-mt8">
+                        <div class="ui-setting-head"><span class="ui-label">Strike Thickness</span><span class="ui-value-sm" id="settingsKeyDustVal">2px</span></div>
+                        <input class="ui-full" type="range" id="settingsKeyDustRange" min="1" max="10" value="2" aria-label="Key Dust">
+                    </div>
+                    <div class="perf-setting-block ui-mt8">
+                        <div class="section-title ui-mb8">Strike Line & Particles</div>
+                        <div class="ui-setting-head-gap">
+                            <div class="ui-label-strong">Strike Line</div>
+                            <div class="toggle-switch" id="settingsStrikeLineToggle"><div class="toggle-track active" id="settingsStrikeLineTrack"><div class="toggle-thumb"></div></div></div>
+                        </div>
+                        <div class="ui-setting-head-gap ui-mt8">
+                            <div class="ui-label-strong">Particles</div>
+                            <div class="toggle-switch" id="settingsDustToggle"><div class="toggle-track active" id="settingsDustTrack"><div class="toggle-thumb"></div></div></div>
+                        </div>
+                        <div class="ui-setting-head-divided-soft">
+                            <span class="ui-label">Particle Count</span>
+                            <span class="ui-value-sm" id="settingsDustAmountVal">20%</span>
+                        </div>
+                        <input class="ui-full" type="range" id="settingsDustAmountRange" min="0" max="50" value="20" aria-label="Dust Amount">
+                    </div>
+
+                </div>
+                <div class="settings-section" data-settings-section="practice">
+                    <div class="section-title">Practice</div>
+                    <div class="perf-setting-block">
+                        <div class="section-title ui-mb8">Metronome</div>
+                        <div class="metro-bpm-display">
+                            <div class="metro-bpm-center"><div class="metro-bpm-num" id="settingsMetroBpmNum">120</div><div class="metro-bpm-label">BPM</div></div>
+                            <div class="metro-bpm-btns">
+                                <button class="metro-bpm-btn settings-metro-bpm" data-delta="-10">−10</button>
+                                <button class="metro-bpm-btn settings-metro-bpm" data-delta="-1">−1</button>
+                                <button class="metro-bpm-btn settings-metro-bpm" data-delta="1">+1</button>
+                                <button class="metro-bpm-btn settings-metro-bpm" data-delta="10">+10</button>
+                            </div>
+                        </div>
+                        <input type="range" class="metro-bpm-slider" id="settingsMetroBpmSlider" min="20" max="300" value="120" aria-label="Metro Bpm">
+                        <button class="metro-start-btn ui-mt8" id="settingsMetroStartBtn">Start</button>
+                    </div>
+                    <div class="settings-sub-divider"></div>
+                    <div class="section-title">System</div>
+                    <div class="ui-grid-2-wide">
+                        <button class="btn" id="settingsMidiBtn">MIDI Connection</button>
+                        <button class="btn" id="settingsFullscreenBtn">Fullscreen</button>
+                    </div>
+                    <button class="btn ui-danger-action" id="resetBtn">Reset Settings</button>
+                    <button class="btn ui-primary-action" id="saveBtn">Save My Preset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sfPanel" class="floating-panel">
+        <div class="panel-header"><span class="panel-title">SoundFont</span><button class="panel-close" data-close-panel="sfPanel">✕</button></div>
+
+        <div class="sf-tab-grid">
+            <button class="btn sf-tab active" id="sfTabMain" data-tab="main">Main</button>
+            <button class="btn sf-tab" id="sfTabLayer" data-tab="layer">Layer</button>
+        </div>
+
+        <div class="sf-page active" id="sfPageMain">
+            <div class="section-title">Main SoundFont</div>
+            <div class="sf-current-card"><span class="sf-current-label">Current</span><span class="sf-current-value" id="mainSfCurrent">Grand Piano</span></div>
+            <details class="sf-category">
+                <summary>Piano</summary>
+                <div class="sf-category-body">
+                    <button class="btn sf-option active ui-full-left" id="mainGrandPiano" data-layer="piano" data-sf-key="grandPiano">Grand Piano</button>
+                    <button class="btn sf-option ui-full-left" id="mainStagePiano" data-layer="piano" data-sf-key="stagePiano">Stage Piano</button>
+                    <button class="btn sf-option ui-full-left" id="mainSal1" data-layer="piano" data-sf-key="sal1">Concert Grand</button>
+                    <button class="btn sf-option ui-full-left" id="mainAtmosGrand" data-layer="piano" data-sf-key="atmosGrand">Atmos Grand</button>
+                    <button class="btn sf-option ui-full-left" id="mainPfBright" data-layer="piano" data-sf-key="pfBright">Bright Grand</button>
+                    <button class="btn sf-option ui-full-left" id="mainPfSoft" data-layer="piano" data-sf-key="pfSoft">Soft Piano</button>
+                    
+                    <button class="btn sf-option ui-full-left" id="mainPfEPiano" data-layer="piano" data-sf-key="pfEPiano">E-Piano</button>
+                </div>
+            </details>
+            <details class="sf-category">
+                <summary>String</summary>
+                <div class="sf-category-body">
+                    <button class="btn sf-option ui-full-left" id="mainStrViolin" data-layer="piano" data-sf-key="strViolin">Violin</button>
+                    <button class="btn sf-option ui-full-left" id="mainStrCello" data-layer="piano" data-sf-key="strCello">Cello</button>
+                    <button class="btn sf-option ui-full-left" id="mainStrEnsemble" data-layer="piano" data-sf-key="strEnsemble">Strings</button>
+                    <button class="btn sf-option ui-full-left" id="mainStrSlow" data-layer="piano" data-sf-key="strSlow">Slow Strings</button>
+                    <button class="btn sf-option ui-full-left" id="mainStrPizz" data-layer="piano" data-sf-key="strPizz">Pizzicato</button>
+                </div>
+            </details>
+            <details class="sf-category">
+                <summary>Orchestra</summary>
+                <div class="sf-category-body">
+                    <button class="btn sf-option ui-full-left" id="mainOrcHorn" data-layer="piano" data-sf-key="orcHorn">French Horns</button>
+                    <button class="btn sf-option ui-full-left" id="mainOrcTrumpet" data-layer="piano" data-sf-key="orcTrumpet">Trumpet</button>
+                    <button class="btn sf-option ui-full-left" id="mainOrcTrombone" data-layer="piano" data-sf-key="orcTrombone">Trombone</button>
+                    <button class="btn sf-option ui-full-left" id="mainOrcFlute" data-layer="piano" data-sf-key="orcFlute">Flute</button>
+                    <button class="btn sf-option ui-full-left" id="mainOrcTimpani" data-layer="piano" data-sf-key="orcTimpani">Timpani</button>
+                </div>
+            </details>
+            <details class="sf-category">
+                <summary>Other</summary>
+                <div class="sf-category-body">
+                    <button class="btn sf-option ui-full-left" id="mainOthNylon" data-layer="piano" data-sf-key="othNylon">Nylon Guitar</button>
+                    <button class="btn sf-option ui-full-left" id="mainOthSteel" data-layer="piano" data-sf-key="othSteel">Steel Guitar</button>
+                    <button class="btn sf-option ui-full-left" id="mainOthBass" data-layer="piano" data-sf-key="othBass">Fingered Bass</button>
+                    <button class="btn sf-option ui-full-left" id="mainOthVibraphone" data-layer="piano" data-sf-key="othVibraphone">Vibraphone</button>
+                    <button class="btn sf-option ui-full-left" id="mainOthMarimba" data-layer="piano" data-sf-key="othMarimba">Marimba</button>
+                    <button class="btn sf-option ui-full-left" id="mainOthChoir" data-layer="piano" data-sf-key="othChoir">Choir Aahs</button>
+                    <button class="btn sf-option ui-full-left" id="mainOthOrgan" data-layer="piano" data-sf-key="othOrgan">Church Organ</button>
+                </div>
+            </details>
+            <details class="sf-category" id="customSf2Category">
+                <summary>Custom SF2</summary>
+                <div class="sf-category-body">
+                    <button class="btn sf-option ui-full-left" id="mainCustomSf2Load" type="button">Load .sf2 file…</button>
+                    <input type="file" id="customSf2FileInput" accept=".sf2,.SF2" style="display:none">
+                    <div id="customSf2Filename" class="custom-sf2-filename" hidden></div>
+                    <div id="customSf2PresetList" class="custom-sf2-presets"></div>
+                    <div id="customSf2Status" class="custom-sf2-status" hidden></div>
+                </div>
+            </details>
+        </div>
+
+        <div class="sf-page" id="sfPageLayer">
+            <div class="ui-setting-head-gap" style="margin:0 0 10px;">
+                <div class="section-title" style="margin:0;">Layer SoundFont</div>
+                <div class="toggle-switch" id="layerToggle"><div class="toggle-track" id="layerTrack"><div class="toggle-thumb"></div></div></div>
+            </div>
+            <div class="sf-current-card"><span class="sf-current-label">Current</span><span class="sf-current-value" id="layerSfCurrent">Violin</span></div>
+            <div class="sf-effect-card ui-mb10">
+                <div class="sf-effect-head">
+                    <span>Layer Range</span><span id="stringRangeVal">Keys 1 - 88</span>
+                </div>
+                <div class="string-range-control">
+                    <div class="string-range-values"><span id="stringLeftTutsLabel">L A0</span><span id="stringRightTutsLabel">R C8</span></div>
+                    <div class="string-range-slider" id="stringRangeSlider">
+                        <div class="string-range-track"></div>
+                        <div class="string-range-fill"></div>
+                        <input type="range" id="stringLeftTutsRange" min="1" max="88" value="1" aria-label="Left layer tuts range">
+                        <input type="range" id="stringRightTutsRange" min="1" max="88" value="88" aria-label="Right layer tuts range">
+                    </div>
+                </div>
+            </div>
+            <div class="sf-effect-card ui-mb10">
+                <div class="sf-effect-head">
+                    <span>Layer Transpose</span><span id="sf2TransposeVal">0</span>
+                </div>
+                <div style="display:flex; align-items:center; justify-content:center; gap:14px; padding-top:2px;">
+                    <button class="btn" id="sf2TransposeDown" type="button" aria-label="Layer transpose down">−</button>
+                    <button class="btn" id="sf2TransposeUp" type="button" aria-label="Layer transpose up">+</button>
+                </div>
+            </div>
+            <details class="sf-category">
+                <summary>Piano</summary>
+                <div class="sf-category-body">
+                    <button class="btn sf-option ui-full-left" id="layerGrandPiano" data-layer="string" data-sf-key="grandPiano">Grand Piano</button>
+                    <button class="btn sf-option ui-full-left" id="layerStagePiano" data-layer="string" data-sf-key="stagePiano">Stage Piano</button>
+                    <button class="btn sf-option ui-full-left" id="layerAtmosGrand" data-layer="string" data-sf-key="atmosGrand">Atmos Grand</button>
+                    <button class="btn sf-option ui-full-left" id="layerSal1" data-layer="string" data-sf-key="sal1">Concert Grand</button>
+                    <button class="btn sf-option ui-full-left" id="layerPfBright" data-layer="string" data-sf-key="pfBright">Bright Grand</button>
+                    <button class="btn sf-option ui-full-left" id="layerPfSoft" data-layer="string" data-sf-key="pfSoft">Soft Piano</button>
+                    
+                    <button class="btn sf-option ui-full-left" id="layerPfEPiano" data-layer="string" data-sf-key="pfEPiano">E-Piano</button>
+                </div>
+            </details>
+            <details class="sf-category">
+                <summary>String</summary>
+                <div class="sf-category-body">
+                    <button class="btn sf-option active ui-full-left" id="layerStrViolin" data-layer="string" data-sf-key="strViolin">Violin</button>
+                    <button class="btn sf-option ui-full-left" id="layerStrCello" data-layer="string" data-sf-key="strCello">Cello</button>
+                    <button class="btn sf-option ui-full-left" id="layerStrEnsemble" data-layer="string" data-sf-key="strEnsemble">Strings</button>
+                    <button class="btn sf-option ui-full-left" id="layerStrSlow" data-layer="string" data-sf-key="strSlow">Slow Strings</button>
+                    <button class="btn sf-option ui-full-left" id="layerStrPizz" data-layer="string" data-sf-key="strPizz">Pizzicato</button>
+                </div>
+            </details>
+            <details class="sf-category">
+                <summary>Orchestra</summary>
+                <div class="sf-category-body">
+                    <button class="btn sf-option ui-full-left" id="layerOrcHorn" data-layer="string" data-sf-key="orcHorn">French Horns</button>
+                    <button class="btn sf-option ui-full-left" id="layerOrcTrumpet" data-layer="string" data-sf-key="orcTrumpet">Trumpet</button>
+                    <button class="btn sf-option ui-full-left" id="layerOrcTrombone" data-layer="string" data-sf-key="orcTrombone">Trombone</button>
+                    <button class="btn sf-option ui-full-left" id="layerOrcFlute" data-layer="string" data-sf-key="orcFlute">Flute</button>
+                    <button class="btn sf-option ui-full-left" id="layerOrcTimpani" data-layer="string" data-sf-key="orcTimpani">Timpani</button>
+                </div>
+            </details>
+            <details class="sf-category">
+                <summary>Other</summary>
+                <div class="sf-category-body">
+                    <button class="btn sf-option ui-full-left" id="layerOthNylon" data-layer="string" data-sf-key="othNylon">Nylon Guitar</button>
+                    <button class="btn sf-option ui-full-left" id="layerOthSteel" data-layer="string" data-sf-key="othSteel">Steel Guitar</button>
+                    <button class="btn sf-option ui-full-left" id="layerOthBass" data-layer="string" data-sf-key="othBass">Fingered Bass</button>
+                    <button class="btn sf-option ui-full-left" id="layerOthVibraphone" data-layer="string" data-sf-key="othVibraphone">Vibraphone</button>
+                    <button class="btn sf-option ui-full-left" id="layerOthMarimba" data-layer="string" data-sf-key="othMarimba">Marimba</button>
+                    <button class="btn sf-option ui-full-left" id="layerOthChoir" data-layer="string" data-sf-key="othChoir">Choir Aahs</button>
+                    <button class="btn sf-option ui-full-left" id="layerOthOrgan" data-layer="string" data-sf-key="othOrgan">Church Organ</button>
+                </div>
+            </details>
+        </div>
+
+    </div>
+
+    <div id="audioPanel" class="floating-panel">
+        <div class="panel-header"><span class="panel-title">Audio</span><button class="panel-close" data-close-panel="audioPanel">✕</button></div>
+
+        <div class="section-title">Volume</div>
+        <div class="sf-effect-card">
+            <div class="sf-effect-head">
+                <span>Main Volume</span><span id="pianoVolVal">100%</span>
+            </div>
+            <input type="range" id="pianoVolRange" min="0" max="100" value="100" aria-label="Main Volume">
+            <div class="sf-effect-head">
+                <span>Layer Volume</span><span id="stringVolVal">100%</span>
+            </div>
+            <input type="range" id="stringVolRange" min="0" max="100" value="100" aria-label="Layer Volume">
+        </div>
+
+            <div class="section-title">Effect</div>
+            <div class="sf-effect-stack">
+                <div class="sf-effect-card">
+                    <div class="sf-effect-head">
+                        <span>Main Sustain</span><span id="sustainSf1Val">100%</span>
+                    </div>
+                    <input type="range" id="sustainSf1Range" min="0" max="100" value="100" aria-label="Main Sustain">
+                    <div class="sf-effect-head">
+                        <span>Main Reverb</span><span id="reverbSf1Val">30%</span>
+                    </div>
+                    <input type="range" id="reverbSf1Range" min="0" max="100" value="30" aria-label="Main Reverb">
+                </div>
+                <div class="sf-effect-card">
+                    <div class="sf-effect-head">
+                        <span>Layer Fade</span><span id="sustainSf2Val">5.0s</span>
+                    </div>
+                    <input type="range" id="sustainSf2Range" min="0.1" max="10" step="0.1" value="5.0" aria-label="Layer Fade">
+                    <div class="sf-effect-head">
+                        <span>Layer Reverb</span><span id="reverbSf2Val">0%</span>
+                    </div>
+                    <input type="range" id="reverbSf2Range" min="0" max="100" value="0" aria-label="Layer Reverb">
+                </div>
+            </div>
+    </div>
+
+    <div id="sheetPanel" class="floating-panel">
+        <div class="panel-header"><span class="panel-title">Sheet</span><button class="panel-close" data-close-panel="sheetPanel">✕</button></div>
+        <div class="section-title">Paste a QWERTY sheet to read while you play</div>
+        <textarea id="sheetTextArea" class="sheet-textarea" placeholder="Paste your QWERTY sheet here…" spellcheck="false"></textarea>
+        <div style="display:flex; gap:8px; align-self:flex-start;">
+            <button class="btn" id="sheetPasteBtn" type="button">Paste</button>
+            <button class="btn" id="sheetClearBtn" type="button">Clear</button>
+        </div>
+    </div>
+
+    <div id="keyPanel" class="floating-panel">
+        <div class="panel-header"><span class="panel-title">Keys</span><button class="panel-close" data-close-panel="keyPanel">✕</button></div>
+        <div class="section-title" style="margin-bottom:12px;">Visible Keys</div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-bottom:12px;">
+            <button class="btn key-preset-btn ui-pad-x-10" data-key-count="20">34</button>
+            <button class="btn key-preset-btn ui-pad-x-10" data-key-count="33">56</button>
+            <button class="btn key-preset-btn ui-pad-x-10" data-key-count="52">88</button>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:10px;"><button class="btn ui-stepper-btn" id="wD">−</button><div class="ui-count"><div id="wC" style="color:white; font-size:28px; font-weight:800; line-height:1;">88</div><div class="ui-count-sub">keys</div></div><button class="btn ui-stepper-btn" id="wU">+</button></div>
+        <button class="btn key-apply-btn" id="keyApply" type="button">Apply</button>
+        <div style="color:rgba(255,255,255,0.35); font-size:10px; text-align:center;">Min: 3 | Max: 52</div>
+        <div class="perf-setting-block" style="margin-top:12px;">
+                                <div class="section-title ui-mb8">Custom Piano</div>
+                                <div class="ui-setting-head-divided">
+                                    <span class="ui-label">Black Key Width</span>
+                                    <span class="ui-value" id="blackKeyWidthVal">120%</span>
+                                </div>
+                                <input class="ui-full" type="range" id="blackKeyWidthRange" min="70" max="130" value="120" aria-label="Black Key Width">
+                                <div class="ui-setting-head-divided">
+                                    <span class="ui-label">Black Key Height</span>
+                                    <span class="ui-value" id="blackKeyHeightVal">60%</span>
+                                </div>
+                                <input class="ui-full" type="range" id="blackKeyHeightRange" min="45" max="75" value="60" aria-label="Black Key Height">
+                                <div class="ui-setting-head-divided">
+                                    <span class="ui-label">Black Key Edge Depth</span>
+                                    <span class="ui-value" id="blackKeyEdgeDepthVal">40%</span>
+                                </div>
+                                <input class="ui-full" type="range" id="blackKeyEdgeDepthRange" min="10" max="100" value="40" aria-label="Black Key Edge Depth">
+                                <div class="ui-setting-head-divided">
+                                    <span class="ui-label">Piano Visibility</span>
+                                    <span class="ui-value" id="pianoVisibilityVal">100%</span>
+                                </div>
+                                <input class="ui-full" type="range" id="pianoVisibilityRange" min="0" max="100" value="100" aria-label="Piano Visibility">
+                                <div class="ui-setting-head-divided">
+                                    <span class="ui-label">Piano Height</span>
+                                    <span class="ui-value" id="keyPanelHVal">50%</span>
+                                </div>
+                                <input class="ui-full" type="range" id="keyPanelHRange" min="0" max="100" value="50" aria-label="Key Panel H">
+                                <div class="ui-setting-head-divided">
+                                    <span class="ui-label">Piano Position</span>
+                                    <span class="ui-value" id="pianoLiftVal">0%</span>
+                                </div>
+                                <input class="ui-full" type="range" id="pianoLiftRange" min="0" max="30" value="0" aria-label="Piano Position">
+                            </div>
+    </div>
+
+    <div id="metronomePanel" class="floating-panel">
+        <div class="panel-header">
+            <span class="panel-title">Metronome</span>
+            <button class="panel-close" data-close-panel="metronomePanel">✕</button>
+        </div>
+        <div class="color-row compact-color-row metro-card">
+            <div class="metro-bpm-display">
+                <div class="metro-bpm-center">
+                    <div class="metro-bpm-num" id="metroBpmNum">120</div>
+                    <div class="metro-bpm-label">BPM</div>
+                </div>
+                <div class="metro-bpm-btns">
+                    <button class="metro-bpm-btn" id="metroBpmDown10">−10</button>
+                    <button class="metro-bpm-btn" id="metroBpmDown">−1</button>
+                    <button class="metro-bpm-btn" id="metroBpmUp">+1</button>
+                    <button class="metro-bpm-btn" id="metroBpmUp10">+10</button>
+                </div>
+            </div>
+            <input type="range" class="metro-bpm-slider" id="metroBpmSlider" min="20" max="300" value="120" aria-label="Metro Bpm">
+            <div class="metro-dots" id="metroDots"></div>
+        </div>
+        <div class="color-row compact-color-row metro-card">
+            <div class="section-title">Time Signature</div>
+            <div class="metro-beat-grid" id="metroBeatGrid">
+                <button class="metro-beat-btn" data-beats="2">2/4</button>
+                <button class="metro-beat-btn active" data-beats="4">4/4</button>
+                <button class="metro-beat-btn" data-beats="3">3/4</button>
+                <button class="metro-beat-btn" data-beats="6">6/8</button>
+            </div>
+        </div>
+        <div class="color-row compact-color-row metro-card">
+            <div class="section-title">Tick Sound</div>
+            <div class="metro-sound-grid" id="metroSoundGrid">
+                <button class="metro-sound-btn active" data-sound="click">Click</button>
+                <button class="metro-sound-btn" data-sound="beep">Beep</button>
+                <button class="metro-sound-btn" data-sound="wood">Wood</button>
+                <button class="metro-sound-btn" data-sound="hihat">Hi-Hat</button>
+            </div>
+        </div>
+        <button class="metro-start-btn" id="metroStartBtn">Start</button>
+    </div>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="auraLiquidFilter" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.045" numOctaves="3" seed="7" stitchTiles="stitch" result="liquidNoise"/><feOffset id="auraLiquidOffset" in="liquidNoise" dx="0" dy="0" result="liquidNoiseMoved"/><feDisplacementMap in="SourceGraphic" in2="liquidNoiseMoved" scale="20" xChannelSelector="R" yChannelSelector="G"/></filter></defs></svg>
+    <div class="stage"><div id="octaveLinesLayer"></div><canvas id="fxParticles"></canvas><canvas id="fx"></canvas><div id="strikeLine"><i class="sl-wave-b" aria-hidden="true"></i></div><div id="strikeLineHit" aria-hidden="true"></div><div id="strikeLineAuraSegments" aria-hidden="true"></div><div id="strikeReactionLayer"></div><div id="chordDisplay"><div class="chord-name primary" id="chordPrimary"></div><div class="chord-name secondary" id="chordSecondary"></div></div></div><div id="perfHud" class="perf-hud"><span class="perf-fps">-- FPS</span></div>
+    <div id="swipeStrip"></div>
+    <div id="pianoWrap"><div id="pianoViewport"><div id="piano"></div><div id="activeKeyLayer"></div></div></div>
+</div>
+
+<div id="sfLoadingOverlay">
+    <div class="sf-load-spinner">
+        <div class="sf-load-spinner-ring sf-load-spinner-ring-1"></div>
+        <div class="sf-load-spinner-ring sf-load-spinner-ring-2"></div>
+        <div class="sf-load-spinner-core"></div>
+    </div>
+    <div class="ui-count">
+        <div class="sf-load-title">Loading SoundFont</div>
+        <div id="sfLoadingName" class="sf-load-name"></div>
+    </div>
+    <div class="sf-load-progress">
+        <div class="sf-load-bar-track"><div id="sfProgressBar" class="sf-load-bar-fill"></div></div>
+        <div class="sf-load-stats">
+            <span id="sfLoadingBytes" class="sf-load-bytes"></span>
+            <span id="sfProgressPct" class="sf-load-pct">0%</span>
+        </div>
+    </div>
+    <button id="sfLoadingCancelBtn" type="button" class="sf-load-cancel-btn">Cancel</button>
+</div>
+
+<div id="bootSfChip">
+    <span class="bsc-spinner"><i></i><i></i><b></b></span>
+    <span class="bsc-text" id="bootSfChipText">Loading sound</span>
+    <span class="bsc-bar"><i id="bootSfChipBar"></i></span>
+</div>
+
+<script src="/js/shared/sf2-loader.min.js?v=6"></script>
+<script src="/js/app/cognito-auth.min.js?v=20260629"></script>
+<script src="/js/app/appsync-client.min.js?v=20260629"></script><script src="/js/shared/playtime-tracker.min.js" defer></script>
+<script src="/js/shared/auto-velocity.min.js?v=1"></script>
+<script src="/js/solo/solo-piano.min.js?v=20260716sf1"></script>
+<script src="/js/shared/updater.min.js?v=dev"></script>
+</body>
+</html>
